@@ -6,5 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class students extends Model
 {
-    //
+  
+
+    protected $fillable=[
+        'class',
+        'name',
+        'parent_id',
+    ];
+    public function parent()
+    {
+        return $this->belongsTo(parents::class, 'parent_id');
+    }
+
+    public function assessments()
+    {
+        return $this->hasMany(assessments::class);
+    }
+
+    public function studentTopics()
+    {
+        return $this->hasMany(student_topics::class);
+    }
 }
