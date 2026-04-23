@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Assessments;
 
 use App\Filament\Resources\Assessments\Pages\CreateAssessments;
+use App\Filament\Resources\Assessments\Pages\DoAssessment;
 use App\Filament\Resources\Assessments\Pages\EditAssessments;
 use App\Filament\Resources\Assessments\Pages\ListAssessments;
 use App\Filament\Resources\Assessments\Schemas\AssessmentsForm;
@@ -13,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+
 
 class AssessmentsResource extends Resource
 {
@@ -45,6 +47,7 @@ class AssessmentsResource extends Resource
             'index' => ListAssessments::route('/'),
             'create' => CreateAssessments::route('/create'),
             'edit' => EditAssessments::route('/{record}/edit'),
+            'assessment' => DoAssessment::route('/{record}/assessment'),
         ];
     }
 }
