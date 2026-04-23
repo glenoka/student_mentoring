@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Assessments\Pages;
 
 use App\Filament\Resources\Assessments\AssessmentsResource;
+use App\Models\assessment_answers;
 use App\Models\questions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -19,7 +20,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
-class DoAssessment extends Page implements HasForms 
+class DoAssessment extends Page implements HasForms
 {
     use InteractsWithForms;
     protected static string $resource = AssessmentsResource::class;
@@ -32,16 +33,16 @@ class DoAssessment extends Page implements HasForms
 
         $this->record = $record;
     }
-     protected function getCreateFormAction(): array
-     {
-       
-   return [
+    protected function getCreateFormAction(): array
+    {
+
+        return [
             Action::make('back')
                 ->label('test')
                 ->button()
                 ->icon('heroicon-o-arrow-left')
                 ->url(AssessmentsResource::getUrl('index'))
-             
+
                 ->color('secondary'),
         ];
     }
@@ -58,6 +59,7 @@ class DoAssessment extends Page implements HasForms
                     ])->schema([
                         TextInput::make("answers_numeric.{$question->id}")
                             ->numeric()
+                            ->required()
                             ->hiddenLabel()
                             ->minValue(1)
                             ->maxValue(100)
@@ -81,13 +83,20 @@ class DoAssessment extends Page implements HasForms
                     ])->schema([
                         Radio::make("answers_boolean.{$question->id}")
                             ->hiddenLabel()
+                            ->required()
                             ->options([
                                 1 => 'Ya',
                                 0 => 'Tidak',
                             ])
                             ->inline()
                             ->required()
+                            ->live()
                             ->columnSpan(1),
+                        TextInput::make("answers_boolean_notes.{$question->id}")
+                            ->hiddenLabel()
+                            ->placeholder('Catatan (opsional)')
+                            ->columnSpanFull()
+                            ->visible(fn (Get $get) => $get("answers_boolean.{$question->id}") == 1),
                     ]),
                 ])
                 ->columns(1)
@@ -106,26 +115,45 @@ class DoAssessment extends Page implements HasForms
                 ->description('Pilih jawaban yang sesuai')
                 ->collapsible()
                 ->schema($booleanQuestionsMapped),
-            
+
             Actions::make([
                 Action::make('simpan')
                     ->label('Submit Assessment')
                     ->icon('heroicon-o-check')
-                    ->color('success')
+                    ->color('primary')
                     ->requiresConfirmation()
                     ->modalHeading('Konfirmasi Submit')
                     ->modalDescription('Apakah Anda yakin ingin menyimpan semua jawaban?')
                     ->modalSubmitActionLabel('Ya, Simpan')
                     ->action(function () {
-                        dd($this->data);
+                        $data = $this->data;
+                        // Simpan jawaban boolean
+                        foreach ($data['answers_boolean'] as $questionId => $value) {
+                            assessment_answers::create([
+                                'assessment_id' => $this->record,
+                                'question_id'   => $questionId,
+                                'boolean_value' => (bool) $value,
+                                'notes'         => $data['answers_boolean_notes'][$questionId] ?? null,
+                                'numeric_value' => null,
+                            ]);
+                        }
+
+                        // Simpan jawaban numeric
+                        foreach ($data['answers_numeric'] as $questionId => $value) {
+                            assessment_answers::create([
+                                'assessment_id' => $this->record,
+                                'question_id'   => $questionId,
+                                'numeric_value' => $value,
+                                'boolean_value' => null,
+                            ]);
+                        }
+
                         Notification::make()
                             ->title('Berhasil disimpan!')
                             ->success()
                             ->send();
                     }),
-            ])->fullWidth(),
+            ]),
         ])->statePath('data');
     }
-
-   
 }
