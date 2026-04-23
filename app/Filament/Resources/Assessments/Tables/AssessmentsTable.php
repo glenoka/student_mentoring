@@ -19,16 +19,27 @@ class AssessmentsTable
     public static function configure(Table $table): Table
     {
         return $table
+         ->emptyStateHeading('No assessments found.')
         ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('student.name')->label('Student Name'),
                 TextColumn::make('assessment_date')->label('Assessment Date')->date(),
+                TextColumn::make('status')
+                ->label('Status')
+                ->badge(fn($state) => match ($state) {
+                    'not_started' => 'secondary',
+                    'finished' => 'success',
+                })
+                ->formatStateUsing(fn($record) => match ($record->status) {
+                    'not_started' => 'Not Started',
+                    'finished' => 'Finished',
+                }),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                EditAction::make()->hidden(fn(assessments $record): string => $record->status === 'finished'),
+                // EditAction::make()->hidden(fn(assessments $record): string => $record->status === 'finished'),
                 ViewAction::make()->hidden(fn(assessments $record): string => $record->status === 'not_started'),
                 Action::make('assessment')
                     ->label('Assessment')
