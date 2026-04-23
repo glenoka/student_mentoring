@@ -5,11 +5,10 @@ namespace App\Filament\Resources\Assessments\Pages;
 use App\Filament\Resources\Assessments\AssessmentsResource;
 use App\Models\assessment_answers;
 use App\Models\questions;
+use App\Models\assessments;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -147,7 +146,9 @@ class DoAssessment extends Page implements HasForms
                                 'boolean_value' => null,
                             ]);
                         }
-
+                        Assessments::find($this->record)->update([
+                            'status' => 'finished',
+                        ]);
                         Notification::make()
                             ->title('Berhasil disimpan!')
                             ->success()

@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Assessments\Schemas;
 
 
 use App\Models\students;
-use Carbon\Traits\Date;
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
@@ -21,7 +21,7 @@ class AssessmentsForm
                     ->required(),
                 DatePicker::make('assessment_date')
                     ->label('Assessment Date')
-                    ->default(Date::today())
+                    ->default(Carbon::today())
                     ->required(),
             ]);
     }

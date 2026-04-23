@@ -12,6 +12,7 @@ class assessments extends Model
     protected $fillable = [
         'student_id',
         'assessment_date',
+        'status',
     ];
 
     protected $casts = [
