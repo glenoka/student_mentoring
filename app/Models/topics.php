@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class topics extends Model
@@ -23,6 +24,6 @@ class topics extends Model
 
     public function materials()
     {
-        return $this->hasMany(materials::class);
+        return $this->hasMany(learning_materials::class);
     }
 }
