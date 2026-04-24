@@ -26,11 +26,14 @@ class DoAssessment extends Page implements HasForms
 
     protected string $view = 'filament.resources.assessments.pages.do-assessment';
     public $record;
+    public $assessmentID;
     public ?array $data = [];
     public function mount($record): void
     {
+$assessment = assessments::where('uuid', $record)->firstOrFail();
 
-        $this->record = $record;
+        $this->assessmentID = $assessment->id;
+     
     }
     protected function getCreateFormAction(): array
     {
@@ -126,10 +129,10 @@ class DoAssessment extends Page implements HasForms
                     ->modalSubmitActionLabel('Ya, Simpan')
                     ->action(function () {
                         $data = $this->data;
-                        // Simpan jawaban boolean
+                      
                         foreach ($data['answers_boolean'] as $questionId => $value) {
                             assessment_answers::create([
-                                'assessment_id' => $this->record,
+                                'assessment_id' => $this->assessmentID,
                                 'question_id'   => $questionId,
                                 'boolean_value' => (bool) $value,
                                 'notes'         => $data['answers_boolean_notes'][$questionId] ?? null,
@@ -140,13 +143,13 @@ class DoAssessment extends Page implements HasForms
                         // Simpan jawaban numeric
                         foreach ($data['answers_numeric'] as $questionId => $value) {
                             assessment_answers::create([
-                                'assessment_id' => $this->record,
+                                'assessment_id' => $this->assessmentID,
                                 'question_id'   => $questionId,
                                 'numeric_value' => $value,
                                 'boolean_value' => null,
                             ]);
                         }
-                        Assessments::find($this->record)->update([
+                        assessments::find($this->assessmentID)->update([
                             'status' => 'finished',
                         ]);
                         Notification::make()

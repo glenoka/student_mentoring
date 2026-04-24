@@ -23,7 +23,7 @@ class assessment_answers extends Model
 
     public function assessment()
     {
-        return $this->belongsTo(assessments::class);
+        return $this->belongsTo(assessments::class,);
     }
 
     public function question()

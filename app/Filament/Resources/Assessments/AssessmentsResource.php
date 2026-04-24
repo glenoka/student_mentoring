@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Assessments;
 
 use App\Filament\Resources\Assessments\Pages\CreateAssessments;
+use App\Filament\Resources\Assessments\Pages\DetailAssessment;
 use App\Filament\Resources\Assessments\Pages\DoAssessment;
 use App\Filament\Resources\Assessments\Pages\EditAssessments;
 use App\Filament\Resources\Assessments\Pages\ListAssessments;
@@ -48,6 +49,7 @@ class AssessmentsResource extends Resource
             'create' => CreateAssessments::route('/create'),
             'edit' => EditAssessments::route('/{record}/edit'),
             'assessment' => DoAssessment::route('/{record}/assessment'),
+            'detail' => DetailAssessment::route('/{record}'),
         ];
     }
 }

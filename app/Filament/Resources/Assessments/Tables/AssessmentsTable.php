@@ -40,7 +40,7 @@ class AssessmentsTable
             ])
             ->recordActions([
                 // EditAction::make()->hidden(fn(assessments $record): string => $record->status === 'finished'),
-                ViewAction::make()->hidden(fn(assessments $record): string => $record->status === 'not_started'),
+                //ViewAction::make()->hidden(fn(assessments $record): string => $record->status === 'not_started'),
                 Action::make('assessment')
                     ->label('Assessment')
                     ->icon('heroicon-o-document-text')
@@ -50,6 +50,13 @@ class AssessmentsTable
                         'record' => $record,
                     ]))
                     ->openUrlInNewTab(),
+                Action::make('detail')
+                    ->label('Detail')
+                    ->icon('heroicon-o-eye')
+                    ->color('primary')
+                    ->url(fn($record) => AssessmentsResource::getUrl('detail',[
+                        'record' => $record,
+                    ])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -1,3 +1,3 @@
 <x-filament-panels::page>
-    {{-- Page content --}}
+ {{ $this->detailAssessmentInfolist }}
 </x-filament-panels::page>
