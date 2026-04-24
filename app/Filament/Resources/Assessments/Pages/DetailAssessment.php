@@ -51,8 +51,8 @@ public function detailAssessmentInfolist(Schema $schema): Schema
                                 ->icon('heroicon-o-calendar-days')
                                 ->date('d M Y'),
 
-                            TextEntry::make('assessor.name')
-                                ->label('Penilai')
+                            TextEntry::make('student.name')
+                                ->label('Nama Siswa')
                                 ->icon('heroicon-o-user-circle')
                                 ->default('—'),
 
@@ -63,6 +63,11 @@ public function detailAssessmentInfolist(Schema $schema): Schema
                                     'not_started' => 'gray',
                                     'finished'   => 'success',
                                     default     => 'info',
+                                })
+                                ->formatStateUsing(fn (?string $state): string => match ($state) {
+                                    'not_started' => 'Not Started',
+                                    'finished'   => 'Finished',
+                                    default     => 'Dalam Proses',
                                 }),
                         ]),
                 ])
@@ -101,41 +106,48 @@ public function detailAssessmentInfolist(Schema $schema): Schema
                         ),
 
                     // ✅ BOOLEAN TAB
-                    Tab::make('Ya / Tidak')
-                        ->icon('heroicon-o-check-badge')
-                        ->components(
-                            $booleanAnswers->isNotEmpty()
-                                ? $booleanAnswers
-                                    ->flatMap(function ($answer) {
-                                        $entries = [
-                                            IconEntry::make('answer_bool_' . $answer->id)
-                                                ->label($answer->question->question_text)
-                                                ->boolean()
-                                                ->inlineLabel(true)
-                                                ->state($answer->boolean_value),
-                                        ];
+                   Tab::make('Ya / Tidak')
+    ->label('Pertanyaan Ya / Tidak')
+    ->icon('heroicon-o-check-badge')
+    ->components(
+        $booleanAnswers->isNotEmpty()
+            ? $booleanAnswers
+                ->map(function ($answer,$index) {
 
-                                        if ($answer->boolean_value && $answer->notes) {
-                                            $entries[] = TextEntry::make('answer_note_' . $answer->id)
-                                                ->label('Catatan')
-                                                ->state($answer->notes)
-                                                ->icon('heroicon-o-chat-bubble-left-ellipsis')
-                                                ->color('gray')
-                                                ->columnSpanFull();
-                                        }
+                    $schema = [
+                        TextEntry::make('answer_bool_' . $answer->id)
+    ->label('Pertanyaan ' . ($index + 1))
+    ->html()
+    ->state(function () use ($answer) {
+        $icon = $answer->boolean_value
+            ? '✅'
+            : '❌';
 
-                                        return $entries;
-                                    })
-                                    ->values()
-                                    ->all()
-                                : [
-                                    TextEntry::make('no_boolean')
-                                        ->label('')
-                                        ->state('Tidak ada pertanyaan ya/tidak.')
-                                        ->icon('heroicon-o-information-circle')
-                                        ->color('gray'),
-                                  ]
-                        ),
+        return "{$icon} {$answer->question->question_text}";
+    })
+                    ];
+
+                    if ($answer->boolean_value && $answer->notes) {
+                        $schema[] = TextEntry::make('answer_note_' . $answer->id)
+                            ->hiddenLabel()
+                            ->icon('heroicon-o-chat-bubble-left')
+                            ->state($answer->notes)
+                            ->columnSpanFull();
+                    }
+
+                    return Section::make()
+                        ->schema($schema)
+                        ->columns(1)
+                        ->collapsible(false);
+                })
+                ->values()
+                ->all()
+            : [
+                TextEntry::make('empty')
+                    ->label('')
+                    ->state('Tidak ada pertanyaan ya/tidak.')
+            ]
+    )
                 ])
                 ->columnSpanFull(),
         ]);

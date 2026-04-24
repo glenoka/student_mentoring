@@ -23,7 +23,8 @@ class CreateAssessments extends CreateRecord
        
         if ($checkExistingAssessment) {
            Notification::make()
-                ->title('An assessment for this student already exists.')
+                ->title('Assessment untuk siswa ini sudah ada!')
+                ->body('Setiap siswa hanya boleh memiliki satu assessment. Silakan periksa daftar assessment yang ada.')
                 ->danger()
                 ->send();
 
