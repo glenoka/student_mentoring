@@ -10,7 +10,7 @@ class learning_materials extends Model
    use HasFactory;
 
     protected $fillable = [
-        'topic_id',
+        //'topic_id',
         'title',
         'type',
         'url',
