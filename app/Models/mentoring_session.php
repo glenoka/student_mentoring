@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class mentoring_session extends Model
 {
@@ -33,6 +34,19 @@ class mentoring_session extends Model
 
     public function comments()
     {
-        return $this->hasMany(mentoring_commentssd::class);
+        return $this->hasMany(mentoring_comments::class);
     }
+
+    protected static function booted(): void
+{
+    static::creating(function ($model) {
+        if (!$model->uuid) {
+            $model->uuid = Str::uuid();
+        }
+    });
+}
+public function getRouteKeyName(): string
+{
+    return 'uuid';
+}
 }

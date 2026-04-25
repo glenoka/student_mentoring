@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class topics extends Model
 {
@@ -11,6 +12,8 @@ class topics extends Model
 
     protected $fillable = [
         'title',
+        'type',
+        'url',
         'description',
         'achievement',
         'strategy',
@@ -26,4 +29,16 @@ class topics extends Model
     {
         return $this->hasMany(learning_materials::class);
     }
+    protected static function booted(): void
+{
+    static::creating(function ($model) {
+        if (!$model->uuid) {
+            $model->uuid = Str::uuid();
+        }
+    });
+}
+public function getRouteKeyName(): string
+{
+    return 'uuid';
+}
 }
