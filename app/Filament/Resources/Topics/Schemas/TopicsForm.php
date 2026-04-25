@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\Topics\Schemas;
 
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class TopicsForm
@@ -10,7 +13,35 @@ class TopicsForm
     {
         return $schema
             ->components([
-                //
+                TextInput::make('title')
+                    ->label('Judul Topik')
+                    ->required()
+                    ->maxLength(255),
+                Select::make('category')
+                    ->label('Kategori Topik')
+                    ->options([
+                        'math'=>'Matematika',
+                        'language'=>'Bahasa',
+                    ])
+                    ->required(),
+                TextInput::make('type')
+                        ->hidden()
+                        ->default('doc'),
+                Textarea::make('description')
+                    ->label('Deskripsi Topik')
+                    ->maxLength(65535)
+                    ->rows(10)
+                    ->cols(20),
+                Textarea::make('achievement')
+                    ->label('Pencapaian Topik')
+                    ->maxLength(65535)
+                    ->rows(10)
+                    ->cols(20),
+                Textarea::make('strategy')
+                    ->label('Strategi Topik')
+                    ->maxLength(65535)
+                    ->rows(10)
+                    ->cols(20),
             ]);
     }
 }
