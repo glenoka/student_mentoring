@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class mentoring_comments extends Model
@@ -23,7 +24,7 @@ class mentoring_comments extends Model
 
     public function session()
     {
-        return $this->belongsTo(mentoring_sessions::class, 'mentoring_session_id');
+        return $this->belongsTo(mentoring_session::class, 'mentoring_session_id');
     }
 
     public function parent()
