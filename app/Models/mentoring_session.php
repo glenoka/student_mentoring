@@ -8,10 +8,10 @@ use Illuminate\Support\Str;
 
 class mentoring_session extends Model
 {
-    use HasFasctory;
+    use HasFactory;
 
     protected $fillable = [
-        'teacher_id',
+        'user_id',
         'student_topic_id',
         'session_date',
         'notes',
@@ -22,10 +22,10 @@ class mentoring_session extends Model
         'session_date' => 'date',
     ];
 
-    public function teacher()
-    {
-        return $this->belongsTo(teachers::class);
-    }
+  public function user()
+{
+    return $this->belongsTo(User::class);
+}
 
     public function studentTopic()
     {
