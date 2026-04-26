@@ -44,4 +44,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(parents::class);
     }
+    public function mentoringSessions()
+{
+    return $this->hasMany(mentoring_session::class);
+}
 }
