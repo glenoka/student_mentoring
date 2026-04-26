@@ -38,6 +38,10 @@ class AssessmentsTable
                         'not_started' => 'secondary',
                         'finished' => 'success',
                     })
+                    ->color(fn($state) => match ($state) {
+                        'not_started' => 'primary',
+                        'finished' => 'success',
+                    })
                     ->formatStateUsing(fn($record) => match ($record->status) {
                         'not_started' => 'Not Started',
                         'finished' => 'Finished',
@@ -59,6 +63,7 @@ class AssessmentsTable
                     ]))
                     ->openUrlInNewTab(),
                 Action::make('detail')
+                ->hidden(fn(assessments $record): string => $record->status === 'not_started')
                     ->label('Detail')
                     ->icon('heroicon-o-eye')
                     ->color('primary')
@@ -66,6 +71,7 @@ class AssessmentsTable
                         'record' => $record,
                     ])),
                 Action::make('topic')
+                ->hidden(fn(assessments $record): string => $record->status === 'not_started')
                     ->fillForm(fn($record) => [
                         'topics' => student_topics::where('assessment_id', $record->id)
                             ->get()
