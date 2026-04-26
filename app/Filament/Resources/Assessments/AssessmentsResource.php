@@ -7,6 +7,7 @@ use App\Filament\Resources\Assessments\Pages\DetailAssessment;
 use App\Filament\Resources\Assessments\Pages\DoAssessment;
 use App\Filament\Resources\Assessments\Pages\EditAssessments;
 use App\Filament\Resources\Assessments\Pages\ListAssessments;
+use App\Filament\Resources\Assessments\Pages\StudentTopic;
 use App\Filament\Resources\Assessments\Schemas\AssessmentsForm;
 use App\Filament\Resources\Assessments\Tables\AssessmentsTable;
 use App\Models\Assessments;
@@ -49,7 +50,8 @@ class AssessmentsResource extends Resource
             'create' => CreateAssessments::route('/create'),
             'edit' => EditAssessments::route('/{record}/edit'),
             'assessment' => DoAssessment::route('/{record}/assessment'),
-            'detail' => DetailAssessment::route('/{record}'),
+            'detail' => DetailAssessment::route('/{record}/detail'),
+            
         ];
     }
 }

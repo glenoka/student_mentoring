@@ -42,6 +42,9 @@ class TopicsForm
                     ->maxLength(65535)
                     ->rows(10)
                     ->cols(20),
+                TextInput::make('url')
+                    ->label('URL Topik')
+                    ->maxLength(255),
             ]);
     }
 }
