@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Topics\Schemas;
 
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -20,28 +21,30 @@ class TopicsForm
                 Select::make('category')
                     ->label('Kategori Topik')
                     ->options([
-                        'math'=>'Matematika',
-                        'language'=>'Bahasa',
+                        'math' => 'Matematika',
+                        'language' => 'Bahasa',
                     ])
                     ->required(),
                 TextInput::make('type')
-                        ->hidden()
-                        ->default('doc'),
-                Textarea::make('description')
+                    ->hidden()
+                    ->default('doc'),
+                RichEditor::make('description')
                     ->label('Deskripsi Topik')
-                    ->maxLength(65535)
-                    ->rows(10)
-                    ->cols(20),
-                Textarea::make('achievement')
+                    ->extraAttributes([
+                        'style' => 'min-height:300px'
+                    ])
+                    ->required(),
+                RichEditor::make('achievement')
                     ->label('Pencapaian Topik')
-                    ->maxLength(65535)
-                    ->rows(10)
-                    ->cols(20),
-                Textarea::make('strategy')
-                    ->label('Strategi Topik')
-                    ->maxLength(65535)
-                    ->rows(10)
-                    ->cols(20),
+                    ->extraAttributes([
+                        'style' => 'min-height:300px'
+                    ])
+                    ->required(),
+                RichEditor::make('strategy')
+                ->extraAttributes([
+                        'style' => 'min-height:300px'
+                    ])
+                    ->label('Strategi Topik'),
                 TextInput::make('url')
                     ->label('URL Topik')
                     ->maxLength(255),
