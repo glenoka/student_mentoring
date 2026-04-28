@@ -26,6 +26,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
@@ -84,12 +85,12 @@ class MentoringSession extends Page implements HasForms
             ->latest()
             ->get()
             ->map(function ($item) {
-if($item->parent_id==null){
-    $mentorName=$item->teacher->name;
-}else{
-     $mentorName=$item->parent->name;
-}
-               
+                if ($item->parent_id == null) {
+                    $mentorName = $item->teacher->name;
+                } else {
+                    $mentorName = $item->parent->name;
+                }
+
 
                 return [
                     'id' => $item->id,
@@ -101,7 +102,6 @@ if($item->parent_id==null){
                 ];
             })
             ->toArray();
-            
     }
 
 
@@ -221,6 +221,9 @@ if($item->parent_id==null){
                                                     ])
 
                                                     ->columnSpanFull(),
+                                                TextInput::make('mentoring_session_id')
+                                                    ->hidden(),
+
                                                 Action::make('saveSession')
                                                     ->label('Simpan Catatan')
                                                     ->button()
@@ -233,7 +236,6 @@ if($item->parent_id==null){
                                                         $editor = new Editor();
                                                         $html = $editor->setContent($json)->getHTML();
 
-
                                                         $dataCreate = [
                                                             'mentoring_session_id' => $this->studentTopic->mentoringSessions->id,
                                                             'message' => $html,
@@ -241,7 +243,16 @@ if($item->parent_id==null){
                                                             'progress_status' => $this->session_details['progress_status'] ?? null,
                                                         ];
 
-                                                        $createComment = mentoring_comments::create($dataCreate);
+                                                        $editId = $this->session_details['mentoring_session_id'] ?? null;
+
+                                                        if ($editId) {
+                                                            $createComment = mentoring_comments::find($editId)?->update([
+                                                                'message' => $html,
+                                                                'progress_status' => $this->session_details['progress_status'] ?? null,
+                                                            ]);
+                                                        } else {
+                                                            $createComment = mentoring_comments::create($dataCreate);
+                                                        }
                                                         if ($createComment) {
                                                             $this->session_details = [];
                                                             Notification::make()
@@ -270,4 +281,37 @@ if($item->parent_id==null){
                     ])->contained(false)
             ]);
     }
+
+    public function editSession($id)
+    {
+
+        $getComment = mentoring_comments::find($id);
+
+        $this->session_details = [
+            'message' => $getComment->message,
+            'progress_status' => $getComment->progress_status,
+            'mentoring_session_id' => $getComment->id,
+        ];
+    }
+
+   // Tambahkan sebagai method yang return Action
+public function deleteSessionAction(): Action
+{
+    return Action::make('deleteSession')
+        ->requiresConfirmation()
+        ->modalHeading('Hapus Catatan')
+        ->modalDescription('Apakah kamu yakin ingin menghapus catatan ini? Tindakan ini tidak bisa dibatalkan.')
+        ->modalSubmitActionLabel('Ya, Hapus')
+        ->color('danger')
+        ->action(function (array $arguments) {
+            mentoring_comments::find($arguments['id'])?->delete();
+
+            Notification::make()
+                ->title('Deleted successfully')
+                ->success()
+                ->send();
+
+            $this->loadSessions();
+        });
+}
 }
