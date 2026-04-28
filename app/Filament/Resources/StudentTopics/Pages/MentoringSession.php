@@ -196,6 +196,6 @@ class MentoringSession extends Page implements HasForms
                                 // ...
                             ]),
                     ])->contained(false)
-            ]);
+                        ]),
     }
 }
