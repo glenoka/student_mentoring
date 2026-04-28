@@ -14,6 +14,7 @@ class mentoring_comments extends Model
         'parent_id',
         'teacher_id',
         'parent_comment_id',
+        'progress_status',
         'message',
         'is_read',
     ];

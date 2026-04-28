@@ -3,7 +3,7 @@
    
 
     
-  {{ $this->mentoringInfolist }}
+  {{ $this->mentoring}}
    
 
 </x-filament-panels::page>
