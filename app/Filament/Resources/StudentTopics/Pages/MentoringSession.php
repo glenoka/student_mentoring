@@ -8,21 +8,26 @@ use App\Models\student_topics;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\Page;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
 use Illuminate\Support\Facades\Auth;
+use Tiptap\Editor;
 
 
 class MentoringSession extends Page implements HasForms
@@ -33,11 +38,11 @@ class MentoringSession extends Page implements HasForms
     protected string $view = 'filament.resources.student-topics.pages.mentoring-session';
 
     public $studentTopic;
-    public $message;
-   public ?array $session_details = [
-    'message' => null,
-    'progress_status' => 'developing',
-];
+
+    public ?array $session_details = [
+        'message' => '',
+        'progress_status' => 'progressing',
+    ];
     public string $activeTab = 'overview';
     public function mount($record): void
     {
@@ -56,7 +61,7 @@ class MentoringSession extends Page implements HasForms
 
 
 
-    public function mentoringInfolist(Schema $schema): Schema
+    public function mentoring(Schema $schema): Schema
     {
         return $schema
             ->record($this->studentTopic)
@@ -148,10 +153,12 @@ class MentoringSession extends Page implements HasForms
 
                                                 RichEditor::make('message')
                                                     ->label('Catatan Mentoring')
+                                                  ->default('<p><strong>Test</strong></p>')
                                                     ->placeholder('Tulis catatan mentoring di sini...')
                                                     ->extraAttributes([
                                                         'style' => 'min-height:200px',
                                                     ]),
+
                                                 DatePicker::make('session_date')
                                                     ->label('Tanggal Sesi'),
                                                 Select::make('progress_status')
@@ -161,31 +168,82 @@ class MentoringSession extends Page implements HasForms
                                                     ->default('developing')
                                                     ->options([
                                                         'pending_support' => 'Perlu Pendampingan',
-                                                        'developing'      => 'Sedang Berkembang',
-                                                        'reinforcement'   => 'Perlu Penguatan',
-                                                        'progressing'     => 'Menunjukkan Perkembangan',
-                                                        'good'            => 'Memahami dengan Baik',
-                                                        'excellent'       => 'Sangat Baik',
+                                                        'developing' => 'Sedang Berkembang',
+                                                        'reinforcement' => 'Perlu Penguatan',
+                                                        'progressing' => 'Menunjukkan Perkembangan',
+                                                        'good' => 'Memahami dengan Baik',
+                                                        'excellent' => 'Sangat Baik',
                                                     ])
 
                                                     ->columnSpanFull(),
-                                                Action::make('saveSession')
-                                                    ->label('Simpan Catatan')
-                                                    ->button()
-                                                    ->icon('heroicon-m-chat-bubble-oval-left-ellipsis')
-                                                    ->extraAttributes([
-                                                        'class' => 'mt-4',
-                                                    ])
-                                                    ->action(function () {
+Action::make('saveSession')
+                                                ->label('Simpan Catatan')
+                                                ->button()
+                                                ->icon('heroicon-m-chat-bubble-oval-left-ellipsis')
+                                                ->extraAttributes([
+                                                    'class' => 'mt-4',
+                                                ])
+                                                ->action(function ($data) {
+                                                    $json = $this->session_details['message'];
+                                                    $editor = new Editor();
+                                                    $html = $editor->setContent($json)->getHTML();
 
-                                                        dd($this->session_details,$this->message);
-                                                    }),
+                                                    dd([
+                                                        'message' => $html,
+                                                        'session_date' => $this->session_details['session_date'] ?? null,
+                                                        'progress_status' => $this->session_details['progress_status'] ?? null,
+                                                    ]);
+                                                }),
                                             ]),
-
+                                        
 
                                         Section::make('Session Notes')
                                             ->schema([
-                                                // ...
+                                              View::make('filament.resources.student-topics.pages.timeline-mentoring')
+          ->viewData([
+    'sessions' => collect([
+        [
+            'session_date' => '2026-04-28',
+            'progress_status' => 'good',
+            'mentor' => 'Bapak Andi Pratama',
+            'duration' => '45 Menit',
+            'message' => '
+                <p>Siswa sudah memahami penjumlahan 1 digit dengan baik.</p>
+                <p>Masih perlu latihan pada pengurangan sederhana.</p>
+            ',
+        ],
+        [
+            'session_date' => '2026-04-27',
+            'progress_status' => 'progressing',
+            'mentor' => 'Bapak Andi Pratama',
+            'duration' => '40 Menit',
+            'message' => '
+                <p>Siswa mulai memahami konsep penjumlahan dasar.</p>
+                <p>Fokus belajar cukup baik dan aktif bertanya.</p>
+            ',
+        ],
+        [
+            'session_date' => '2026-04-26',
+            'progress_status' => 'developing',
+            'mentor' => 'Bapak Andi Pratama',
+            'duration' => '30 Menit',
+            'message' => '
+                <p>Pengenalan konsep dasar berhitung.</p>
+                <p>Siswa memahami angka 1 sampai 10.</p>
+            ',
+        ],
+        [
+            'session_date' => '2026-04-25',
+            'progress_status' => 'pending_support',
+            'mentor' => 'Ibu Sari Wulandari',
+            'duration' => '35 Menit',
+            'message' => '
+                <p>Siswa masih kesulitan membedakan simbol + dan -.</p>
+                <p>Perlu pendampingan lebih intensif di rumah.</p>
+            ',
+        ],
+    ]),
+])
                                             ])->columns(1),
                                     ])
                             ]),
@@ -196,6 +254,6 @@ class MentoringSession extends Page implements HasForms
                                 // ...
                             ]),
                     ])->contained(false)
-                        ]),
+            ]);
     }
 }
