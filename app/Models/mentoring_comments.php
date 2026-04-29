@@ -45,9 +45,11 @@ class mentoring_comments extends Model
     }
 
     public function replies()
-    {
-        return $this->hasMany(mentoring_comments::class, 'parent_comment_id');
-    }
+{
+    return $this->hasMany(self::class, 'parent_comment_id')
+        ->latest();
+}
+    
 
     // Helper: siapa pengirim
     public function getSenderAttribute()

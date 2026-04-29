@@ -26,7 +26,7 @@
                     default => ['-', 'gray'],
                 };
 
-                $commentCount = $item['comments_count'] ?? 0;
+                $commentCount = $item['comment_count'] ?? 0;
             @endphp
 
             <div class="grid grid-cols-12 gap-4">
@@ -122,6 +122,10 @@
                         </div>
 
                         {{-- Comment --}}
+
+
+                        {{-- Modal Comment --}}
+                        {{-- Comment --}}
                         <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
 
                             <div class="flex items-center justify-between">
@@ -129,12 +133,97 @@
                                     Comment
                                 </span>
 
-                                <x-filament::badge color="info">
-                                    {{ $commentCount }}
-                                </x-filament::badge>
+                                <button type="button" x-data
+                                    x-on:click="$dispatch('open-modal', { id: 'comment-modal-{{ $item['id'] }}' })"
+                                    class="inline-flex items-center gap-2">
+                                    <x-filament::badge color="info">
+                                        {{ $commentCount }}
+                                    </x-filament::badge>
+                                </button>
                             </div>
 
                         </div>
+
+                        {{-- Modal Per Session --}}
+                        <x-filament::modal id="comment-modal-{{ $item['id'] }}" width="3xl">
+
+                            <x-slot name="heading">
+                                Comment Session
+                            </x-slot>
+
+                            <div class="space-y-4 max-h-[500px] overflow-y-auto">
+
+                                @php
+                                    $comments = \App\Models\mentoring_comments::query()
+                                        ->with(['teacher', 'parent'])
+                                        ->where('parent_comment_id', $item['id'])
+                                        ->latest()
+                                        ->get();
+                                @endphp
+
+                                @forelse($comments as $comment)
+
+                                    @php
+                                        $sender = $comment->teacher_id
+                                            ? $comment->teacher?->name
+                                            : $comment->parent?->name;
+
+                                        $role = $comment->teacher_id ? 'Guru' : 'Orang Tua';
+                                    @endphp
+
+                                    <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+
+                                        <div class="flex justify-between items-start gap-3">
+
+                                            <div>
+                                                <div class="font-semibold text-sm text-gray-900 dark:text-white">
+                                                    {{ $sender }}
+                                                </div>
+
+                                                <div class="text-xs text-primary-600">
+                                                    {{ $role }}
+                                                </div>
+                                            </div>
+
+                                            <div class="text-xs text-gray-500">
+                                                {{ $comment->created_at->format('d M Y H:i') }}
+                                            </div>
+
+                                        </div>
+
+                                        <div
+                                            class="mt-3 text-sm text-gray-700 dark:text-gray-300 prose prose-sm max-w-none dark:prose-invert">
+                                            {!! $comment->message !!}
+                                        </div>
+
+                                    </div>
+
+                                @empty
+
+                                    <div class="text-center text-sm text-gray-500 py-10">
+                                        Belum ada comment
+                                    </div>
+
+                                @endforelse
+
+                            </div>
+                            
+
+                           
+
+                               {{ $this->form }}
+    <div class="mt-4 flex justify-end">
+    <x-filament::button
+        wire:click="sendReply({{ $item['id'] }})"
+    >
+        Kirim Balasan
+    </x-filament::button>
+</div>
+                                
+
+                         
+
+                        </x-filament::modal>
 
                         {{-- Footer --}}
                         <div class="px-5 py-3 flex justify-between text-sm text-gray-500">

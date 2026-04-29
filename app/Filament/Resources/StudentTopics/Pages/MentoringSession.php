@@ -22,6 +22,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -44,6 +45,7 @@ class MentoringSession extends Page implements HasForms
     public $studentTopic;
     public $teacher;
     public array $sessions = [];
+        public ?array $data = [];
 
     public ?array $session_details = [
         'message' => '',
@@ -80,8 +82,10 @@ class MentoringSession extends Page implements HasForms
         }
 
         return $this->sessions = mentoring_comments::query()
-            ->with(['teacher.user', 'parent.user'])
+            ->with(['teacher.user', 'parent.user','replies'])
+             ->withCount('replies')
             ->where('mentoring_session_id', $sessionId)
+            ->whereNull('parent_comment_id')
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -99,6 +103,7 @@ class MentoringSession extends Page implements HasForms
                     'mentor' => $mentorName,
                     'duration' => '45 Menit',
                     'message' => $item->message,
+                     'comment_count' => $item->replies_count,
                 ];
             })
             ->toArray();
@@ -313,5 +318,35 @@ public function deleteSessionAction(): Action
 
             $this->loadSessions();
         });
+}
+
+   public function form(Schema $schema): Schema
+{
+    return $schema
+        ->statePath('data')
+        ->schema([
+            Textarea::make('message')
+                ->label('Balasan Guru')
+                ->placeholder('Tulis balasan...')
+                ->rows(4)
+                ->required()
+                ->maxLength(1000),
+        ]);
+}
+
+public function sendReply($id){
+     $parent = mentoring_comments::findOrFail($id);
+
+    mentoring_comments::create([
+        'mentoring_session_id' => $parent->mentoring_session_id,
+        'parent_comment_id' => $id,
+        'teacher_id' =>    $this->teacher->id,
+        'message' => $this->data['message'],
+    ]);
+
+ 
+
+    $this->loadSessions();
+    $this->form->fill(); // reset aman
 }
 }
