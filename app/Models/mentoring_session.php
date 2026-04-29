@@ -14,6 +14,7 @@ class mentoring_session extends Model
         'user_id',
         'student_topic_id',
         'session_date',
+        'end_date',
         'notes',
         'status',
     ];

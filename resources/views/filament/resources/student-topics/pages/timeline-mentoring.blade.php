@@ -213,11 +213,13 @@
 
                                {{ $this->form }}
     <div class="mt-4 flex justify-end">
+   @if($this->studentTopic?->status !== 'completed')
     <x-filament::button
         wire:click="sendReply({{ $item['id'] }})"
     >
         Kirim Balasan
     </x-filament::button>
+@endif
 </div>
                                 
 

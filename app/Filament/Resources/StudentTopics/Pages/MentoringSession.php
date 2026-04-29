@@ -31,6 +31,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Tiptap\Editor;
 
@@ -46,16 +47,22 @@ class MentoringSession extends Page implements HasForms
     public $teacher;
     public array $sessions = [];
     public ?array $data = [];
+    public $lastSession;
 
     public ?array $session_details = [
         'message' => '',
         'progress_status' => 'progressing',
+
     ];
     public string $activeTab = 'overview';
     public function mount($record): void
     {
-        $studentTopic = student_topics::where('uuid', $record)->first();
-       
+        $studentTopic = student_topics::where('uuid', $record)->with('mentoringSessions.comments')->first();
+        $this->lastSession = $studentTopic?->mentoringSessions?->comments
+            ?->whereNull('parent_comment_id')
+            ->sortByDesc('created_at')
+            ->first();
+
         $sessionMentoringExists = mentoring_session::where('student_topic_id', $studentTopic->id)->exists();
 
         if (!$sessionMentoringExists) {
@@ -67,8 +74,8 @@ class MentoringSession extends Page implements HasForms
             ];
             $createSession = mentoring_session::create($dataMentoringSession);
             $studentTopic->update([
-    'status' => 'in_progress',
-]);
+                'status' => 'in_progress',
+            ]);
         }
         $this->studentTopic = student_topics::where('uuid', $record)->with('mentoringSessions', 'student', 'assessment', 'topic')->first();
         $this->teacher = User::where('id', Auth::user()->id)->with('teacher')->first();
@@ -76,6 +83,43 @@ class MentoringSession extends Page implements HasForms
         $this->loadSessions();
         //dd($this->loadSessions());
     }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('finish_mentoring')
+                ->label('Mentoring Selesai')
+                ->icon(Heroicon::ShieldCheck)
+                ->color('success')
+               ->hidden(fn () => $this->studentTopic?->status === 'completed')
+                ->schema([
+                    Textarea::make('note')
+                        ->label('Catatan Akhir'),
+                ])
+
+                ->requiresConfirmation()
+                ->modalHeading('Mentoring Selesai')
+                ->modalDescription('Apakah kamu yakin akan mengakhiri Sesi Mentoring ini?')
+                ->modalSubmitActionLabel('Simpan & Akhiri')
+
+                ->action(function (array $data): void {
+                    $dataUpdate = [
+                        'notes' => $data['note'],
+                        'end_date' => now(),
+                        'status' => 'done',
+                    ];
+                    $mentoringSessionUpdate = mentoring_session::where(
+                        'student_topic_id',
+                        $this->studentTopic->id
+                    )->update($dataUpdate);
+
+                    $this->studentTopic->update([
+                        'status' => 'completed',
+                    ]);
+                }),
+        ];
+    }
+
     public function loadSessions(): array
     {
         $sessionId = $this->studentTopic->mentoringSessions?->id;
@@ -83,6 +127,12 @@ class MentoringSession extends Page implements HasForms
         if (!$sessionId) {
             return $this->sessions = [];
         }
+
+        $this->lastSession = mentoring_comments::query()
+            ->where('mentoring_session_id', $sessionId)
+            ->whereNull('parent_comment_id')
+            ->latest()
+            ->first();
 
         return $this->sessions = mentoring_comments::query()
             ->with(['teacher.user', 'parent.user', 'replies'])
@@ -136,22 +186,40 @@ class MentoringSession extends Page implements HasForms
                                                 TextEntry::make('assessment.assessment_date')
                                                     ->date()
                                                     ->label('Assessment Date'),
-                                                TextEntry::make('status')
+                                                TextEntry::make('mentoringSessions.status')
                                                     ->label('Status')
                                                     ->badge()
-                                                    ->color(fn ($state) => match ($state) {
-                                                    'not_started' => 'gray',
-                                                    'in_progress' => 'warning',
-                                                    'completed'=> 'success',
-                                                    default => 'gray',
+                                                    ->color(fn($state) => match ($state) {
+
+                                                        'in_progress' => 'warning',
+                                                        'done' => 'success',
+                                                        default => 'gray',
                                                     })
-                                                   ->formatStateUsing(fn (string $state) => match ($state) {
-                                                    'not_started' => 'Not Started',
-                                                    'in_progress' => 'In Progress',
-                                                    'completed'=> 'Completed',
-                                                    default => 'gray',
+                                                    ->formatStateUsing(fn(string $state) => match ($state) {
+
+                                                        'in_progress' => 'In Progress',
+                                                        'done' => 'Completed',
+                                                        default => 'gray',
                                                     }),
-                                                 
+                                                TextEntry::make('lastSession')
+                                                    ->label('Pertemuan Terakhir')
+                                                    ->live()
+                                                    ->badge()
+                                                    ->color('info')
+                                                    ->getStateUsing(
+                                                        fn() =>
+                                                        $this->lastSession?->created_at?->diffForHumans() ?? 'Belum ada sesi'
+                                                    )
+                                                    ->live()
+                                                    ->default('Belum ada sesi'),
+                                                TextEntry::make('mentoringSessions.session_date')
+                                                    ->date()
+                                                    ->label('Tanggal Mulai'),
+                                                
+                                                TextEntry::make('mentoringSessions.end_date')
+                                                    ->date()
+                                                    ->hidden(fn () => $this->studentTopic?->status === 'on_progress')
+                                                    ->label('Tanggal Selesai')
                                             ])->columns(2),
 
                                         Section::make('Learning Topic')
@@ -216,9 +284,14 @@ class MentoringSession extends Page implements HasForms
                                 Grid::make()
                                     ->schema([
                                         Section::make('Session Details')
+                                              ->hidden(fn () => $this->studentTopic?->status === 'completed')
                                             ->statePath('session_details')
                                             ->schema([
-
+                                                TextEntry::make('topic.title')
+                                                    ->label('Topic Title')
+                                                    ->color('primary')
+                                                    ->inlineLabel()
+                                                    ->columnSpanFull(),
                                                 RichEditor::make('message')
                                                     ->label('Catatan Mentoring')
                                                     ->toolbarButtons([
@@ -290,6 +363,7 @@ class MentoringSession extends Page implements HasForms
 
 
                                         Section::make('Session Notes')
+                                            
                                             ->schema([
                                                 View::make('filament.resources.student-topics.pages.timeline-mentoring')
 
@@ -343,6 +417,7 @@ class MentoringSession extends Page implements HasForms
                     ->label('Balasan Guru')
                     ->placeholder('Tulis balasan...')
                     ->rows(4)
+                    ->hidden(fn () => $this->studentTopic?->status === 'completed')
                     ->required()
                     ->maxLength(1000),
             ]);
@@ -350,6 +425,7 @@ class MentoringSession extends Page implements HasForms
 
     public function sendReply($id)
     {
+      
         $parent = mentoring_comments::findOrFail($id);
 
         mentoring_comments::create([
