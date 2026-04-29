@@ -45,7 +45,7 @@ class StudentTopicsResource extends Resource
         return [
             'index' => ListStudentTopics::route('/'),
             //'create' => CreateStudentTopics::route('/create'),
-            'edit' => EditStudentTopics::route('/{record}/edit'),
+            //'edit' => EditStudentTopics::route('/{record}/edit'),
             'mentoring-session' => Pages\MentoringSession::route('/{record}/mentoring-session'),
         ];
     }
