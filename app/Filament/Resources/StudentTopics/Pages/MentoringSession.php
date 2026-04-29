@@ -45,7 +45,7 @@ class MentoringSession extends Page implements HasForms
     public $studentTopic;
     public $teacher;
     public array $sessions = [];
-        public ?array $data = [];
+    public ?array $data = [];
 
     public ?array $session_details = [
         'message' => '',
@@ -55,7 +55,7 @@ class MentoringSession extends Page implements HasForms
     public function mount($record): void
     {
         $studentTopic = student_topics::where('uuid', $record)->first();
-
+       
         $sessionMentoringExists = mentoring_session::where('student_topic_id', $studentTopic->id)->exists();
 
         if (!$sessionMentoringExists) {
@@ -66,6 +66,9 @@ class MentoringSession extends Page implements HasForms
                 'session_date' => now(),
             ];
             $createSession = mentoring_session::create($dataMentoringSession);
+            $studentTopic->update([
+    'status' => 'in_progress',
+]);
         }
         $this->studentTopic = student_topics::where('uuid', $record)->with('mentoringSessions', 'student', 'assessment', 'topic')->first();
         $this->teacher = User::where('id', Auth::user()->id)->with('teacher')->first();
@@ -82,8 +85,8 @@ class MentoringSession extends Page implements HasForms
         }
 
         return $this->sessions = mentoring_comments::query()
-            ->with(['teacher.user', 'parent.user','replies'])
-             ->withCount('replies')
+            ->with(['teacher.user', 'parent.user', 'replies'])
+            ->withCount('replies')
             ->where('mentoring_session_id', $sessionId)
             ->whereNull('parent_comment_id')
             ->latest()
@@ -103,7 +106,7 @@ class MentoringSession extends Page implements HasForms
                     'mentor' => $mentorName,
                     'duration' => '45 Menit',
                     'message' => $item->message,
-                     'comment_count' => $item->replies_count,
+                    'comment_count' => $item->replies_count,
                 ];
             })
             ->toArray();
@@ -133,6 +136,22 @@ class MentoringSession extends Page implements HasForms
                                                 TextEntry::make('assessment.assessment_date')
                                                     ->date()
                                                     ->label('Assessment Date'),
+                                                TextEntry::make('status')
+                                                    ->label('Status')
+                                                    ->badge()
+                                                    ->color(fn ($state) => match ($state) {
+                                                    'not_started' => 'gray',
+                                                    'in_progress' => 'warning',
+                                                    'completed'=> 'success',
+                                                    default => 'gray',
+                                                    })
+                                                   ->formatStateUsing(fn (string $state) => match ($state) {
+                                                    'not_started' => 'Not Started',
+                                                    'in_progress' => 'In Progress',
+                                                    'completed'=> 'Completed',
+                                                    default => 'gray',
+                                                    }),
+                                                 
                                             ])->columns(2),
 
                                         Section::make('Learning Topic')
@@ -277,12 +296,7 @@ class MentoringSession extends Page implements HasForms
                                             ])->columns(1),
                                     ])
                             ]),
-                        Tab::make('Riwayat Mentoring')
-                            ->label('Riwayat Mentoring')
-                            ->icon('heroicon-o-clock')
-                            ->schema([
-                                // ...
-                            ]),
+
                     ])->contained(false)
             ]);
     }
@@ -299,54 +313,55 @@ class MentoringSession extends Page implements HasForms
         ];
     }
 
-   // Tambahkan sebagai method yang return Action
-public function deleteSessionAction(): Action
-{
-    return Action::make('deleteSession')
-        ->requiresConfirmation()
-        ->modalHeading('Hapus Catatan')
-        ->modalDescription('Apakah kamu yakin ingin menghapus catatan ini? Tindakan ini tidak bisa dibatalkan.')
-        ->modalSubmitActionLabel('Ya, Hapus')
-        ->color('danger')
-        ->action(function (array $arguments) {
-            mentoring_comments::find($arguments['id'])?->delete();
+    // Tambahkan sebagai method yang return Action
+    public function deleteSessionAction(): Action
+    {
+        return Action::make('deleteSession')
+            ->requiresConfirmation()
+            ->modalHeading('Hapus Catatan')
+            ->modalDescription('Apakah kamu yakin ingin menghapus catatan ini? Tindakan ini tidak bisa dibatalkan.')
+            ->modalSubmitActionLabel('Ya, Hapus')
+            ->color('danger')
+            ->action(function (array $arguments) {
+                mentoring_comments::find($arguments['id'])?->delete();
 
-            Notification::make()
-                ->title('Deleted successfully')
-                ->success()
-                ->send();
+                Notification::make()
+                    ->title('Deleted successfully')
+                    ->success()
+                    ->send();
 
-            $this->loadSessions();
-        });
-}
+                $this->loadSessions();
+            });
+    }
 
-   public function form(Schema $schema): Schema
-{
-    return $schema
-        ->statePath('data')
-        ->schema([
-            Textarea::make('message')
-                ->label('Balasan Guru')
-                ->placeholder('Tulis balasan...')
-                ->rows(4)
-                ->required()
-                ->maxLength(1000),
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->statePath('data')
+            ->schema([
+                Textarea::make('message')
+                    ->label('Balasan Guru')
+                    ->placeholder('Tulis balasan...')
+                    ->rows(4)
+                    ->required()
+                    ->maxLength(1000),
+            ]);
+    }
+
+    public function sendReply($id)
+    {
+        $parent = mentoring_comments::findOrFail($id);
+
+        mentoring_comments::create([
+            'mentoring_session_id' => $parent->mentoring_session_id,
+            'parent_comment_id' => $id,
+            'teacher_id' => $this->teacher->id,
+            'message' => $this->data['message'],
         ]);
-}
 
-public function sendReply($id){
-     $parent = mentoring_comments::findOrFail($id);
 
-    mentoring_comments::create([
-        'mentoring_session_id' => $parent->mentoring_session_id,
-        'parent_comment_id' => $id,
-        'teacher_id' =>    $this->teacher->id,
-        'message' => $this->data['message'],
-    ]);
 
- 
-
-    $this->loadSessions();
-    $this->form->fill(); // reset aman
-}
+        $this->loadSessions();
+        $this->form->fill(); // reset aman
+    }
 }
