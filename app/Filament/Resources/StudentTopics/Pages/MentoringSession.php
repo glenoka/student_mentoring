@@ -91,7 +91,7 @@ class MentoringSession extends Page implements HasForms
                 ->label('Mentoring Selesai')
                 ->icon(Heroicon::ShieldCheck)
                 ->color('success')
-               ->hidden(fn () => $this->studentTopic?->status === 'completed')
+                ->hidden(fn() => $this->studentTopic?->status === 'completed')
                 ->schema([
                     Textarea::make('note')
                         ->label('Catatan Akhir'),
@@ -215,10 +215,10 @@ class MentoringSession extends Page implements HasForms
                                                 TextEntry::make('mentoringSessions.session_date')
                                                     ->date()
                                                     ->label('Tanggal Mulai'),
-                                                
+
                                                 TextEntry::make('mentoringSessions.end_date')
                                                     ->date()
-                                                    ->hidden(fn () => $this->studentTopic?->status === 'on_progress')
+                                                    ->hidden(fn() => $this->studentTopic?->status === 'on_progress')
                                                     ->label('Tanggal Selesai')
                                             ])->columns(2),
 
@@ -269,6 +269,17 @@ class MentoringSession extends Page implements HasForms
                                                             ->placeholder('-'),
                                                     ])
                                                     ->columnSpanFull(),
+                                                Section::make('Learning Resources')
+                                                    ->icon('heroicon-o-paper-clip')
+                                                    ->compact()
+                                                    ->schema([
+                                                        TextEntry::make('topic.url')
+                                                            ->label('File / Materi')
+                                                            ->url(fn($state) => $state)
+                                                            ->openUrlInNewTab()
+                                                            ->placeholder('-'),
+                                                    ])
+                                                    ->columnSpanFull(),
 
                                             ])
                                             ->columns(1)
@@ -284,7 +295,7 @@ class MentoringSession extends Page implements HasForms
                                 Grid::make()
                                     ->schema([
                                         Section::make('Session Details')
-                                              ->hidden(fn () => $this->studentTopic?->status === 'completed')
+                                            ->hidden(fn() => $this->studentTopic?->status === 'completed')
                                             ->statePath('session_details')
                                             ->schema([
                                                 TextEntry::make('topic.title')
@@ -363,7 +374,7 @@ class MentoringSession extends Page implements HasForms
 
 
                                         Section::make('Session Notes')
-                                            
+
                                             ->schema([
                                                 View::make('filament.resources.student-topics.pages.timeline-mentoring')
 
@@ -417,7 +428,7 @@ class MentoringSession extends Page implements HasForms
                     ->label('Balasan Guru')
                     ->placeholder('Tulis balasan...')
                     ->rows(4)
-                    ->hidden(fn () => $this->studentTopic?->status === 'completed')
+                    ->hidden(fn() => $this->studentTopic?->status === 'completed')
                     ->required()
                     ->maxLength(1000),
             ]);
@@ -425,7 +436,7 @@ class MentoringSession extends Page implements HasForms
 
     public function sendReply($id)
     {
-      
+
         $parent = mentoring_comments::findOrFail($id);
 
         mentoring_comments::create([
