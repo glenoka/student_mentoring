@@ -26,4 +26,8 @@ class learning_materials extends Model
     {
         return $this->hasMany(material_images::class);
     }
+    public function videos()
+    {
+        return $this->hasMany(material_videos::class);
+    }
 }
