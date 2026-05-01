@@ -2,20 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class material_images extends Model
+class material_videos extends Model
 {
-      use HasFactory;
-
-    protected $fillable = [
+     protected $fillable = [
         'material_id',
-        'image_url',
+        'video_url',
         'description'
     ];
 
-    public function material_image()
+    public function material_video()
     {
         return $this->belongsTo(learning_materials::class);
     }
