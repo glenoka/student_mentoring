@@ -14,12 +14,16 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class StudentTopicsResource extends Resource
 {
     protected static ?string $model = student_topics::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCheckBadge;
+    protected static ?string $navigationLabel = 'Monitoring';
+    protected static string | UnitEnum | null $navigationGroup = 'Assessments & Monitoring';
+    
 
     protected static ?string $recordTitleAttribute = 'student.name';
 

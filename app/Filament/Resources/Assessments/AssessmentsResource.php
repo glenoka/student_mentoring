@@ -10,19 +10,23 @@ use App\Filament\Resources\Assessments\Pages\ListAssessments;
 use App\Filament\Resources\Assessments\Pages\StudentTopic;
 use App\Filament\Resources\Assessments\Schemas\AssessmentsForm;
 use App\Filament\Resources\Assessments\Tables\AssessmentsTable;
-use App\Models\Assessments;
+use App\Models\assessments as ModelsAssessments;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 
 class AssessmentsResource extends Resource
 {
-    protected static ?string $model = Assessments::class;
+    protected static ?string $model = ModelsAssessments::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMagnifyingGlassCircle;
+    protected static ?string $navigationLabel = 'Assessment';
+    protected static string | UnitEnum | null $navigationGroup = 'Assessments & Monitoring';
+    
 
     protected static ?string $recordTitleAttribute = 'a';
 
