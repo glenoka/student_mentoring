@@ -4,7 +4,9 @@ namespace App\Filament\Pages;
 
 use App\Filament\Exports\MonitoringSessionExporter;
 use App\Models\mentoring_session;
+use Barryvdh\DomPDF\Facade\Pdf;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\ExportAction;
@@ -59,6 +61,24 @@ class HistorySession extends Page implements HasActions, HasSchemas, HasTable
                     ->label('Export XLS')
                     ->color('success')
                     ->exporter(MonitoringSessionExporter::class),
+                Action::make('export_pdf')
+                    ->label('Export PDF')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('danger')
+                    ->action(function ($livewire) {
+
+                        // 🔥 ambil data sesuai filter table
+                        $data = $livewire->getFilteredTableQuery()->get();
+
+                        $pdf = Pdf::loadView('pdf.sessions', [
+                            'sessions' => $data
+                        ])->setPaper('a4', 'landscape');
+
+                        return response()->streamDownload(
+                            fn() => print($pdf->output()),
+                            'laporan-sesi.pdf'
+                        );
+                    }),
             ])
             ->filters([
                 SelectFilter::make('month')
