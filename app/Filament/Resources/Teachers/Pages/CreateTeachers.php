@@ -20,6 +20,8 @@ class CreateTeachers extends CreateRecord
     $user= User::updateOrCreate(['username' => $data['username']], $dataUser);
     $data['user_id'] = $user->id;
 
+   $user->assignRole($data['roles']);
+
     return [
         'name' => $data['name'],
         'user_id' => $data['user_id'],

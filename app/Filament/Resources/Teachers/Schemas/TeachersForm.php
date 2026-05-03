@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Teachers\Schemas;
 
 use App\Models\User;
 use Closure;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -13,39 +14,44 @@ class TeachersForm
     {
         return $schema
             ->components([
-                 TextInput::make('name')
+                TextInput::make('name')
                     ->label('Name')
-                    ->columnSpanFull()
                     ->required(),
+                Select::make('roles')
+                ->options([
+                    'super_admin' =>'Admin',
+                    'user' => 'Guru'
+                ])
+                ->default('user'),
                 TextInput::make('username')
                     ->label('Username')
-                    
+
                     ->formatStateUsing(function ($record) {
-                       return $record?->user?->username;
+                        return $record?->user?->username;
                     })
-                    ->readOnly(fn (string $context): bool => $context === 'edit')
-                   ->rules([
-        function ($record) {
-            return function (string $attribute, $value, Closure $fail) use ($record) {
+                    ->readOnly(fn(string $context): bool => $context === 'edit')
+                    ->rules([
+                        function ($record) {
+                            return function (string $attribute, $value, Closure $fail) use ($record) {
 
-                $exists = User::where('username', $value)
-                    ->when($record?->user_id, function ($query) use ($record) {
-                        $query->where('id', '!=', $record->user_id);
-                    })
-                    ->exists();
+                                $exists = User::where('username', $value)
+                                    ->when($record?->user_id, function ($query) use ($record) {
+                                        $query->where('id', '!=', $record->user_id);
+                                    })
+                                    ->exists();
 
-                if ($exists) {
-                    $fail('Username sudah digunakan.');
-                }
-            };
-        },
-    ])
+                                if ($exists) {
+                                    $fail('Username sudah digunakan.');
+                                }
+                            };
+                        },
+                    ])
                     ->required(),
-                    
+
                 TextInput::make('password')
                     ->label('Password')
                     ->password()
-                    ->required(fn (string $context): bool => $context === 'create'),
+                    ->required(fn(string $context): bool => $context === 'create'),
             ]);
     }
 }
