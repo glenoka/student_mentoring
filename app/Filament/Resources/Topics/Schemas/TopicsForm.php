@@ -23,8 +23,7 @@ class TopicsForm
                     ->options([
                         'math' => 'Matematika',
                         'language' => 'Bahasa',
-                    ])
-                    ->required(),
+                    ]),
                 TextInput::make('type')
                     ->hidden()
                     ->default('doc'),
