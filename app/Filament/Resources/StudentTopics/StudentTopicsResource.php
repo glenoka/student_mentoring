@@ -21,8 +21,8 @@ class StudentTopicsResource extends Resource
     protected static ?string $model = student_topics::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCheckBadge;
-    protected static ?string $navigationLabel = 'Monitoring';
-    protected static string | UnitEnum | null $navigationGroup = 'Assessments & Monitoring';
+    protected static ?string $navigationLabel = 'Mentoring';
+    protected static string | UnitEnum | null $navigationGroup = 'Assessments & Mentoring';
     
 
     protected static ?string $recordTitleAttribute = 'student.name';

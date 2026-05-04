@@ -25,7 +25,7 @@ class AssessmentsResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMagnifyingGlassCircle;
     protected static ?string $navigationLabel = 'Assessment';
-    protected static string | UnitEnum | null $navigationGroup = 'Assessments & Monitoring';
+    protected static string | UnitEnum | null $navigationGroup = 'Assessments & Mentoring';
     
 
     protected static ?string $recordTitleAttribute = 'a';
