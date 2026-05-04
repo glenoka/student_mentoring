@@ -314,21 +314,21 @@ class MentoringSession extends Page implements HasForms
                                                     ->extraAttributes([
                                                         'style' => 'min-height:300px',
                                                     ]),
-                                                Select::make('progress_status')
-                                                    ->label('Progress Belajar')
-                                                    ->required()
+                                                // Select::make('progress_status')
+                                                //     ->label('Progress Belajar')
+                                                //     ->required()
 
-                                                    ->default('developing')
-                                                    ->options([
-                                                        'pending_support' => 'Perlu Pendampingan',
-                                                        'developing' => 'Sedang Berkembang',
-                                                        'reinforcement' => 'Perlu Penguatan',
-                                                        'progressing' => 'Menunjukkan Perkembangan',
-                                                        'good' => 'Memahami dengan Baik',
-                                                        'excellent' => 'Sangat Baik',
-                                                    ])
+                                                //     ->default('developing')
+                                                //     ->options([
+                                                //         'pending_support' => 'Perlu Pendampingan',
+                                                //         'developing' => 'Sedang Berkembang',
+                                                //         'reinforcement' => 'Perlu Penguatan',
+                                                //         'progressing' => 'Menunjukkan Perkembangan',
+                                                //         'good' => 'Memahami dengan Baik',
+                                                //         'excellent' => 'Sangat Baik',
+                                                //     ])
 
-                                                    ->columnSpanFull(),
+                                                //     ->columnSpanFull(),
                                                 TextInput::make('mentoring_session_id')
                                                     ->hidden(),
 

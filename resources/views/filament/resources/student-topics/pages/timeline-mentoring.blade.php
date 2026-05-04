@@ -72,9 +72,7 @@
 
                             <div class="flex items-center gap-2">
 
-                                <x-filament::badge :color="$badge[1]">
-                                    {{ $badge[0] }}
-                                </x-filament::badge>
+                               
 
                                 {{-- More Actions --}}
                                 <x-filament::dropdown placement="bottom-end">
@@ -235,10 +233,7 @@
                                 <span>{{ $item['mentor'] }}</span>
                             </div>
 
-                            <div class="flex items-center gap-1">
-                                <x-heroicon-o-clock class="w-4 h-4" />
-                                <span>{{ $item['duration'] }}</span>
-                            </div>
+                           
 
                         </div>
 
