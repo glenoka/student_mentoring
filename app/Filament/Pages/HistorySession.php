@@ -22,6 +22,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class HistorySession extends Page implements HasActions, HasSchemas, HasTable
@@ -30,15 +31,30 @@ class HistorySession extends Page implements HasActions, HasSchemas, HasTable
     use InteractsWithSchemas;
     use InteractsWithTable;
     use HasPageShield;
+
+    public $dataQuery;
     protected string $view = 'filament.pages.history-session';
-     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookmarkSquare;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookmarkSquare;
     protected static ?string $navigationLabel = 'Riwayat Mentoring';
     protected static string | UnitEnum | null $navigationGroup = 'Assessments & Mentoring';
+
+    
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(mentoring_session::with('studentTopic.student', 'studentTopic.topic', 'user.teacher'))
+            ->query(function () {
+                $user = auth()->user();
+
+                $query = mentoring_session::query()
+                    ->with('studentTopic.student', 'studentTopic.topic', 'user.teacher');
+
+                if ($user->hasRole('User')) {
+                    $query->where('user_id', $user->id);
+                }
+
+                return $query;
+            })
             ->columns([
                 TextColumn::make('session_date')
                     ->label('Tanggal')
@@ -55,20 +71,20 @@ class HistorySession extends Page implements HasActions, HasSchemas, HasTable
                     ->badge()
                     ->color('success')
                     ->icon('heroicon-o-book-open')
-                    ->limit(20), 
+                    ->limit(20),
                 TextColumn::make('studentTopic.status')
                     ->label('Status')
                     ->badge()
-                    ->color(fn($state)=>match ($state) {
-                        'not_started' => 'danger' ,
+                    ->color(fn($state) => match ($state) {
+                        'not_started' => 'danger',
                         'in_progress' => 'warning',
-                        'finished'=> 'success'
+                        'completed' => 'success'
                     })
                     ->formatStateUsing(
-                        fn($state)=>match ($state) {
-                        'not_started' => 'Belum Mulai' ,
-                        'in_progress' => 'Sedang Berjalan',
-                        'finished'=> 'Selesai'
+                        fn($state) => match ($state) {
+                            'not_started' => 'Belum Mulai',
+                            'in_progress' => 'Sedang Berjalan',
+                            'completed' => 'Selesai'
                         }
                     ),
 
