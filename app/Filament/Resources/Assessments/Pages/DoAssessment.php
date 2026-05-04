@@ -66,8 +66,9 @@ class DoAssessment extends Page implements HasForms
                                         'style' => 'object-fit: contain; width: 25%; height: auto;',
                                     ])
                                     ->columnSpanFull()
-                                    ->getStateUsing(fn() => asset('storage/' . $question->image))
+                                    ->state($question->image)
                                     ->disk('public')
+                                    ->visibility('public')
                                       ->visible(fn () => filled($question->image)),
                                 TextInput::make("answers_numeric.{$question->id}")
                                     ->numeric()
