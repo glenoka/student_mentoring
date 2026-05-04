@@ -1,45 +1,50 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <style>
         /* Reset & Base Styles */
         body {
-            font-family: 'Times New Roman', Times, serif; /* Font standar dokumen resmi */
+            font-family: 'Times New Roman', Times, serif;
+            /* Font standar dokumen resmi */
             font-size: 12pt;
             line-height: 1.5;
             color: #333;
             margin: 0;
-            padding:0;
+            padding: 0;
         }
 
         @page {
-    size: A4 portrait;
-   margin: 4mm;
-}
-.container {
-    width: 100%;
-    padding: 0;
-}
+            size: A4 portrait;
+            margin: 10mm;
+        }
 
+        .container {
+            width: 100%;
+            padding: 0;
+        }
+
+        /* Header / Kop Surat Styles */
         /* Header / Kop Surat Styles */
         .header-container {
             display: table;
             width: 100%;
-            border-bottom: 3px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 2px;
+            table-layout: fixed;
+            /* KUNCI: Memaksa lebar kolom konsisten */
+            border-collapse: collapse;
         }
 
         .logo-cell {
             display: table-cell;
-            width: 15%;
+            width: 80px;
+            /* Samakan lebar kiri dan kanan agar tengah seimbang */
             vertical-align: middle;
             text-align: center;
         }
 
-        .logo-cell svg {
-            width: 80px;
-            height: 80px;
+        .logo-cell img {
+            width: 70px;
+            height: auto;
         }
 
         .school-info-cell {
@@ -47,21 +52,34 @@
             width: 85%;
             vertical-align: middle;
             text-align: center;
-            padding-right: 80px; /* Offset for logo width to keep text centered */
+            padding-right: 10px;
+            /* Offset for logo width to keep text centered */
+        }
+
+        /* Menggunakan font Sans-Serif yang seragam untuk seluruh header sesuai gambar */
+        .school-info-cell h3,
+        .school-info-cell h2,
+        .school-info-cell .address {
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         .school-info-cell h3 {
             margin: 0;
             text-transform: uppercase;
-            font-size: 14pt;
-            letter-spacing: 1px;
+            font-size: 11pt;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            line-height: 1.1;
+            /* Membuat baris lebih mepet */
         }
 
         .school-info-cell h2 {
-            margin: 2px 0;
+            margin: 0;
             text-transform: uppercase;
-            font-size: 18pt;
+            font-size: 12pt;
             font-weight: bold;
+            line-height: 1.1;
+            /* Membuat baris lebih mepet */
         }
 
         .school-info-cell p {
@@ -115,8 +133,8 @@
 
         /* Footer/Signatures */
         .footer-sign {
-              margin-top: 20px;
-    page-break-inside: avoid;
+            margin-top: 20px;
+            page-break-inside: avoid;
         }
 
         .sign-box {
@@ -131,70 +149,101 @@
 
         /* Print optimization */
         @media print {
-            body { background-color: white; padding: 0; }
-            .container { box-shadow: none; width: 100%; padding: 0; }
+            body {
+                background-color: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                width: 100%;
+                padding: 0;
+            }
         }
     </style>
 </head>
+
 <body>
 
-   <div class="container">
-    <!-- KOP SURAT -->
-    <div class="header-container">
-        <div class="logo-cell">
-            <!-- Placeholder Logo (Tunas Kelapa/Education Icon) -->
-          <img src="{{ public_path('images/tutwuri.png') }}" width="60">
+    <div class="container">
+        <!-- KOP SURAT -->
+        <div class="header-container">
+            <!-- Logo Kiri (Kabupaten Kupang) -->
+            <div class="logo-cell">
+                <!-- Gunakan <img src="link_ke_logo_kupang.png"> jika sudah ada file -->
+                <img src="{{ public_path('images/kupang.png') }}">
+            </div>
+
+            <!-- Informasi Sekolah Sesuai Teks Gambar -->
+            <div class="school-info-cell">
+                <h3>Pemerintah Kabupaten Kupang</h3>
+                <h3>Dinas Pendidikan dan Kebudayaan</h3>
+                <h2>UPTD SEKOLAH MENENGAH PERTAMA NEGERI 10 OESUSU TAKARI</h3>
+                    <p class="address">Jln. Timor Raya km 66 Desa Oesusu, Kec. Takari NPSN 69752277</p>
+            </div>
+
+            <!-- Logo Kanan (Tut Wuri Handayani) -->
+            <div class="logo-cell">
+                <img src="{{ public_path('images/tutwuri.png') }}">
+            </div>
         </div>
-        <div class="school-info-cell">
-            <h3>Pemerintah Kabupaten Kupang</h3>
-            <h3>Dinas Pendidikan dan Kebudayaan</h3>
-            <h2>SMP NEGERI 10 TAKARI</h2>
-            <p>Alamat: Jl. Pendidikan No. 10, Kec. Takari, Kab. Kupang</p>
-            <p>Email: smpn10takari@email.com | Telp: 0812-3456-7890</p>
+        <div class="double-line"></div>
+
+        <!-- JUDUL LAPORAN -->
+        <div class="report-title">
+            Laporan Sesi Mentoring Siswa
         </div>
-    </div>
-    <div class="double-line"></div>
 
-    <!-- JUDUL LAPORAN -->
-    <div class="report-title">
-        Laporan Sesi Mentoring Siswa
-    </div>
-
-<div class="line"></div>
+        <div class="line"></div>
 
 
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Tanggal</th>
-                <th>Siswa</th>
-                <th>Topik</th>
-                <th>Guru</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($sessions as $index => $s)
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ \Carbon\Carbon::parse($s->session_date)->format('d M Y') }}</td>
-                    <td>{{ $s->studentTopic->student->name ?? '-' }}</td>
-                    <td>{{ $s->studentTopic->topic->title ?? '-' }}</td>
-                    <td>{{ $s->user->teacher->name ?? '-' }}</td>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Siswa</th>
+                    <th>Topik</th>
+                    <th>Status</th>
+                    <th>Guru</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
-    <div class="footer-sign">
-        <div class="sign-box">
-            <p>Takari, 22 Mei 2024</p>
-            <p>Kepala Sekolah,</p>
-            <div class="sign-space"></div>
-            <p><strong><u>NAMA KEPALA SEKOLAH, M.Pd.</u></strong></p>
-            <p>NIP. 19750101 200003 1 002</p>
+            </thead>
+            <tbody>
+                @foreach($sessions as $index => $s)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ \Carbon\Carbon::parse($s->session_date)->format('d M Y') }}</td>
+                        <td>{{ $s->studentTopic->student->name ?? '-' }}</td>
+                        <td>{{ $s->studentTopic->topic->title ?? '-' }}</td>
+                        @php
+                            $statuses = [
+                                'not_started' => 'Belum Mulai',
+                                'in_progress' => 'Sedang Berjalan',
+                                'finished' => 'Selesai',
+                            ];
+                        @endphp
+
+                        <td>
+                            {{ $statuses[$s->studentTopic->status] ?? '-' }}
+                        </td>
+                        <td>{{ $s->user->teacher->name ?? '-' }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <div class="footer-sign">
+            <div class="sign-box">
+                <div style="font-size: 10pt; line-height: 1;">
+                    <p>Takari, 22 Mei 2024</p>
+                    <p>Kepala Sekolah,</p>
+                    <br>
+                    <p><strong>NAMA KEPALA SEKOLAH, M.Pd.</strong></p>
+                    <p>NIP. 19750101 200003 1 002</p>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
         </div>
-        <div style="clear: both;"></div>
     </div>
-   </div>
 </body>
+
 </html>

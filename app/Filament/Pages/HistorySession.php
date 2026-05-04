@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Filament\Exports\MonitoringSessionExporter;
 use App\Models\mentoring_session;
+use BackedEnum;
 use Barryvdh\DomPDF\Facade\Pdf;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
@@ -13,6 +14,7 @@ use Filament\Actions\ExportAction;
 use Filament\Pages\Page;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -20,6 +22,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class HistorySession extends Page implements HasActions, HasSchemas, HasTable
 {
@@ -28,6 +31,9 @@ class HistorySession extends Page implements HasActions, HasSchemas, HasTable
     use InteractsWithTable;
     use HasPageShield;
     protected string $view = 'filament.pages.history-session';
+     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookmarkSquare;
+    protected static ?string $navigationLabel = 'Riwayat Mentoring';
+    protected static string | UnitEnum | null $navigationGroup = 'Assessments & Mentoring';
 
     public function table(Table $table): Table
     {
@@ -49,7 +55,22 @@ class HistorySession extends Page implements HasActions, HasSchemas, HasTable
                     ->badge()
                     ->color('success')
                     ->icon('heroicon-o-book-open')
-                    ->limit(20),
+                    ->limit(20), 
+                TextColumn::make('studentTopic.status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn($state)=>match ($state) {
+                        'not_started' => 'danger' ,
+                        'in_progress' => 'warning',
+                        'finished'=> 'success'
+                    })
+                    ->formatStateUsing(
+                        fn($state)=>match ($state) {
+                        'not_started' => 'Belum Mulai' ,
+                        'in_progress' => 'Sedang Berjalan',
+                        'finished'=> 'Selesai'
+                        }
+                    ),
 
                 TextColumn::make('user.teacher.name')
                     ->label('Guru')
