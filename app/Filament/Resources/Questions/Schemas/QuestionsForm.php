@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Questions\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -23,6 +24,12 @@ class QuestionsForm
                         'numeric' => 'Numeric',
                     ])
                     ->required(),
+                FileUpload::make('image')
+                    ->label('Gambar')
+                    ->image()
+                    ->disk('public')
+                    ->directory('questions_image')
+                    ->maxSize(1024),
                 TextInput::make('order_number')
                     ->label('Order Number')
                     ->numeric()

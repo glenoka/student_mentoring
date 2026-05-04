@@ -4,13 +4,14 @@ namespace App\Filament\Resources\Assessments\Pages;
 
 use App\Filament\Resources\Assessments\AssessmentsResource;
 use App\Models\assessment_answers;
-use App\Models\questions;
 use App\Models\assessments;
+use App\Models\questions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Actions;
@@ -30,10 +31,10 @@ class DoAssessment extends Page implements HasForms
     public ?array $data = [];
     public function mount($record): void
     {
-$assessment = assessments::where('uuid', $record)->firstOrFail();
+        $assessment = assessments::where('uuid', $record)->firstOrFail();
 
         $this->assessmentID = $assessment->id;
-     
+
     }
     protected function getCreateFormAction(): array
     {
@@ -59,17 +60,26 @@ $assessment = assessments::where('uuid', $record)->firstOrFail();
                     Grid::make([
                         'md' => 4,
                     ])->schema([
-                        TextInput::make("answers_numeric.{$question->id}")
-                            ->numeric()
-                            ->required()
-                            ->hiddenLabel()
-                            ->minValue(1)
-                            ->maxValue(100)
-                            ->placeholder('Masukkan nilai 1 - 100')
-                            ->suffix('%')
-                            ->required()
-                            ->columnSpan(1),
-                    ]),
+                                ImageEntry::make('image')
+                                    ->hiddenLabel()
+                                    ->extraImgAttributes([
+                                        'style' => 'object-fit: contain; width: 25%; height: auto;',
+                                    ])
+                                    ->columnSpanFull()
+                                    ->getStateUsing(fn() => asset('storage/' . $question->image))
+                                    ->disk('public')
+                                      ->visible(fn () => filled($question->image)),
+                                TextInput::make("answers_numeric.{$question->id}")
+                                    ->numeric()
+                                    ->required()
+                                    ->hiddenLabel()
+                                    ->minValue(1)
+                                    ->maxValue(100)
+                                    ->placeholder('Masukkan nilai 1 - 100')
+                                    ->suffix('%')
+                                    ->required()
+                                    ->columnSpan(1),
+                            ]),
                 ])
                 ->columns(1)
                 ->extraAttributes([
@@ -83,23 +93,23 @@ $assessment = assessments::where('uuid', $record)->firstOrFail();
                     Grid::make([
                         'md' => 4,
                     ])->schema([
-                        Radio::make("answers_boolean.{$question->id}")
-                            ->hiddenLabel()
-                            ->required()
-                            ->options([
-                                1 => 'Ya',
-                                0 => 'Tidak',
-                            ])
-                            ->inline()
-                            ->required()
-                            ->live()
-                            ->columnSpan(1),
-                        TextInput::make("answers_boolean_notes.{$question->id}")
-                            ->hiddenLabel()
-                            ->placeholder('Catatan (opsional)')
-                            ->columnSpanFull()
-                            ->visible(fn (Get $get) => $get("answers_boolean.{$question->id}") == 1),
-                    ]),
+                                Radio::make("answers_boolean.{$question->id}")
+                                    ->hiddenLabel()
+                                    ->required()
+                                    ->options([
+                                        1 => 'Ya',
+                                        0 => 'Tidak',
+                                    ])
+                                    ->inline()
+                                    ->required()
+                                    ->live()
+                                    ->columnSpan(1),
+                                TextInput::make("answers_boolean_notes.{$question->id}")
+                                    ->hiddenLabel()
+                                    ->placeholder('Catatan (opsional)')
+                                    ->columnSpanFull()
+                                    ->visible(fn(Get $get) => $get("answers_boolean.{$question->id}") == 1),
+                            ]),
                 ])
                 ->columns(1)
                 ->extraAttributes([
@@ -129,13 +139,13 @@ $assessment = assessments::where('uuid', $record)->firstOrFail();
                     ->modalSubmitActionLabel('Ya, Simpan')
                     ->action(function () {
                         $data = $this->data;
-                      
+
                         foreach ($data['answers_boolean'] as $questionId => $value) {
                             assessment_answers::create([
                                 'assessment_id' => $this->assessmentID,
-                                'question_id'   => $questionId,
+                                'question_id' => $questionId,
                                 'boolean_value' => (bool) $value,
-                                'notes'         => $data['answers_boolean_notes'][$questionId] ?? null,
+                                'notes' => $data['answers_boolean_notes'][$questionId] ?? null,
                                 'numeric_value' => null,
                             ]);
                         }
@@ -144,7 +154,7 @@ $assessment = assessments::where('uuid', $record)->firstOrFail();
                         foreach ($data['answers_numeric'] as $questionId => $value) {
                             assessment_answers::create([
                                 'assessment_id' => $this->assessmentID,
-                                'question_id'   => $questionId,
+                                'question_id' => $questionId,
                                 'numeric_value' => $value,
                                 'boolean_value' => null,
                             ]);

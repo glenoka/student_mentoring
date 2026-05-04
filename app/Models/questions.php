@@ -14,6 +14,7 @@ class questions extends Model
         'type',
         'category',
         'order_number',
+        'image',
         'is_active',
     ];
     public function answers()
