@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use Illuminate\Foundation\Auth\User as AuthUser;
-use App\Models\assessments;
+use App\Models\Assessments;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class assessmentsPolicy
@@ -17,7 +17,7 @@ class assessmentsPolicy
         return $authUser->can('ViewAny:Assessments');
     }
 
-    public function view(AuthUser $authUser, assessments $assessments): bool
+    public function view(AuthUser $authUser, Assessments $assessments): bool
     {
         return $authUser->can('View:Assessments');
     }
@@ -27,12 +27,12 @@ class assessmentsPolicy
         return $authUser->can('Create:Assessments');
     }
 
-    public function update(AuthUser $authUser, assessments $assessments): bool
+    public function update(AuthUser $authUser, Assessments $assessments): bool
     {
         return $authUser->can('Update:Assessments');
     }
 
-    public function delete(AuthUser $authUser, assessments $assessments): bool
+    public function delete(AuthUser $authUser, Assessments $assessments): bool
     {
         return $authUser->can('Delete:Assessments');
     }
@@ -42,12 +42,12 @@ class assessmentsPolicy
         return $authUser->can('DeleteAny:Assessments');
     }
 
-    public function restore(AuthUser $authUser, assessments $assessments): bool
+    public function restore(AuthUser $authUser, Assessments $assessments): bool
     {
         return $authUser->can('Restore:Assessments');
     }
 
-    public function forceDelete(AuthUser $authUser, assessments $assessments): bool
+    public function forceDelete(AuthUser $authUser, Assessments $assessments): bool
     {
         return $authUser->can('ForceDelete:Assessments');
     }
@@ -62,7 +62,7 @@ class assessmentsPolicy
         return $authUser->can('RestoreAny:Assessments');
     }
 
-    public function replicate(AuthUser $authUser, assessments $assessments): bool
+    public function replicate(AuthUser $authUser, Assessments $assessments): bool
     {
         return $authUser->can('Replicate:Assessments');
     }
