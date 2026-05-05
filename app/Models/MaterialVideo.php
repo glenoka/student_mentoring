@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class material_videos extends Model
+class MaterialVideo extends Model
 {
+    protected $table='material_videos';
      protected $fillable = [
         'material_id',
         'video_url',
@@ -14,6 +15,6 @@ class material_videos extends Model
 
     public function material_video()
     {
-        return $this->belongsTo(learning_materials::class);
+        return $this->belongsTo(LearningMaterial::class);
     }
 }

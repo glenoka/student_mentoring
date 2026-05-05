@@ -217,9 +217,8 @@
                         <td>{{ $s->studentTopic->topic->title ?? '-' }}</td>
                         @php
                             $statuses = [
-                                'not_started' => 'Belum Mulai',
                                 'in_progress' => 'Sedang Berjalan',
-                                'finished' => 'Selesai',
+                                'completed' => 'Selesai',
                             ];
                         @endphp
 
@@ -234,7 +233,7 @@
         <div class="footer-sign">
             <div class="sign-box">
                 <div style="font-size: 10pt; line-height: 1;">
-                    <p>Takari, 22 Mei 2024</p>
+                  <p>Takari, {{ now()->translatedFormat('d F Y') }}</p>
                     <p>Kepala Sekolah,</p>
                     <br>
                     <p><strong>NAMA KEPALA SEKOLAH, M.Pd.</strong></p>

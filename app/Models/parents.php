@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class parents extends Model
+class Parents extends Model
 {
 
     use HasFactory;
+   
     protected $table='parents';
     protected $fillable=[
         'user_id',
@@ -21,11 +22,11 @@ class parents extends Model
 
      public function students()
     {
-        return $this->hasMany(students::class, 'parent_id');
+        return $this->hasMany(Student::class, 'parent_id');
     }
 
     public function comments()
     {
-        return $this->hasMany(mentoring_comments::class, 'parent_id');
+        return $this->hasMany(MentoringComment::class, 'parent_id');
     }
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class teachers extends Model
+class Teachers extends Model
 {
     use HasFactory;
 
@@ -20,11 +20,11 @@ class teachers extends Model
 
     public function mentoringSessions()
     {
-        return $this->hasMany(mentoring_session::class);
+        return $this->hasMany(MentoringSession::class);
     }
 
     public function comments()
     {
-        return $this->hasMany(mentoring_comments::class);
+        return $this->hasMany(MentoringComment::class);
     }
 }

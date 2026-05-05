@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class topics extends Model
+class Topics extends Model
 {
      use HasFactory;
 
@@ -22,12 +22,12 @@ class topics extends Model
 
     public function studentTopics()
     {
-        return $this->hasMany(student_topics::class);
+        return $this->hasMany(StudentTopic::class);
     }
 
     public function materials()
     {
-        return $this->hasMany(learning_materials::class);
+        return $this->hasMany(LearningMaterial::class);
     }
     protected static function booted(): void
 {

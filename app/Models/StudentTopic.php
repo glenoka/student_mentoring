@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class student_topics extends Model
+class StudentTopic extends Model
 {
     use HasFactory;
-
+    protected $table='student_topics';
     protected $fillable = [
         'uuid',
         'student_id',
@@ -21,22 +21,22 @@ class student_topics extends Model
 
     public function student()
     {
-        return $this->belongsTo(students::class);
+        return $this->belongsTo(Student::class);
     }
 
     public function topic()
     {
-        return $this->belongsTo(topics::class);
+        return $this->belongsTo(Topics::class);
     }
 
     public function assessment()
     {
-        return $this->belongsTo(assessments::class);
+        return $this->belongsTo(Assessments::class);
     }
 
     public function mentoringSessions()
     {
-        return $this->hasOne(mentoring_session::class, 'student_topic_id');
+        return $this->hasOne(MentoringSession::class, 'student_topic_id');
     }
 
      protected static function booted(): void

@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\StudentTopics\Pages;
 
 use App\Filament\Resources\StudentTopics\StudentTopicsResource;
-use App\Models\mentoring_comments;
-use App\Models\mentoring_session;
+use App\Models\MentoringComment;
 use App\Models\student_topics;
+use App\Models\StudentTopic;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -34,6 +34,7 @@ use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Tiptap\Editor;
+use App\Models\MentoringSession as ModelMentoringSession;
 
 
 class MentoringSession extends Page implements HasForms
@@ -57,13 +58,13 @@ class MentoringSession extends Page implements HasForms
     public string $activeTab = 'overview';
     public function mount($record): void
     {
-        $studentTopic = student_topics::where('uuid', $record)->with('mentoringSessions.comments')->first();
+        $studentTopic = StudentTopic::where('uuid', $record)->with('mentoringSessions.comments')->first();
         $this->lastSession = $studentTopic?->mentoringSessions?->comments
             ?->whereNull('parent_comment_id')
             ->sortByDesc('created_at')
             ->first();
 
-        $sessionMentoringExists = mentoring_session::where('student_topic_id', $studentTopic->id)->exists();
+        $sessionMentoringExists = ModelMentoringSession::where('student_topic_id', $studentTopic->id)->exists();
 
         if (!$sessionMentoringExists) {
             $dataMentoringSession = [
@@ -72,12 +73,12 @@ class MentoringSession extends Page implements HasForms
                 'status' => 'in_progress',
                 'session_date' => now(),
             ];
-            $createSession = mentoring_session::create($dataMentoringSession);
+            $createSession = ModelMentoringSession::create($dataMentoringSession);
             $studentTopic->update([
                 'status' => 'in_progress',
             ]);
         }
-        $this->studentTopic = student_topics::where('uuid', $record)->with('mentoringSessions', 'student', 'assessment', 'topic')->first();
+        $this->studentTopic = StudentTopic::where('uuid', $record)->with('mentoringSessions', 'student', 'assessment', 'topic')->first();
         $this->teacher = User::where('id', Auth::user()->id)->with('teacher')->first();
 
         $this->loadSessions();
@@ -108,7 +109,7 @@ class MentoringSession extends Page implements HasForms
                         'end_date' => now(),
                         'status' => 'done',
                     ];
-                    $mentoringSessionUpdate = mentoring_session::where(
+                    $mentoringSessionUpdate = ModelMentoringSession::where(
                         'student_topic_id',
                         $this->studentTopic->id
                     )->update($dataUpdate);
@@ -128,13 +129,13 @@ class MentoringSession extends Page implements HasForms
             return $this->sessions = [];
         }
 
-        $this->lastSession = mentoring_comments::query()
+        $this->lastSession = MentoringComment::query()
             ->where('mentoring_session_id', $sessionId)
             ->whereNull('parent_comment_id')
             ->latest()
             ->first();
 
-        return $this->sessions = mentoring_comments::query()
+        return $this->sessions = MentoringComment::query()
             ->with(['teacher.user', 'parent.user', 'replies'])
             ->withCount('replies')
             ->where('mentoring_session_id', $sessionId)
@@ -354,12 +355,12 @@ class MentoringSession extends Page implements HasForms
                                                         $editId = $this->session_details['mentoring_session_id'] ?? null;
 
                                                         if ($editId) {
-                                                            $createComment = mentoring_comments::find($editId)?->update([
+                                                            $createComment = MentoringComment::find($editId)?->update([
                                                                 'message' => $html,
                                                                 'progress_status' => $this->session_details['progress_status'] ?? null,
                                                             ]);
                                                         } else {
-                                                            $createComment = mentoring_comments::create($dataCreate);
+                                                            $createComment = MentoringComment::create($dataCreate);
                                                         }
                                                         if ($createComment) {
                                                             $this->session_details = [];
@@ -389,7 +390,7 @@ class MentoringSession extends Page implements HasForms
     public function editSession($id)
     {
 
-        $getComment = mentoring_comments::find($id);
+        $getComment = MentoringComment::find($id);
 
         $this->session_details = [
             'message' => $getComment->message,
@@ -408,7 +409,7 @@ class MentoringSession extends Page implements HasForms
             ->modalSubmitActionLabel('Ya, Hapus')
             ->color('danger')
             ->action(function (array $arguments) {
-                mentoring_comments::find($arguments['id'])?->delete();
+                MentoringComment::find($arguments['id'])?->delete();
 
                 Notification::make()
                     ->title('Deleted successfully')
@@ -437,9 +438,9 @@ class MentoringSession extends Page implements HasForms
     public function sendReply($id)
     {
 
-        $parent = mentoring_comments::findOrFail($id);
+        $parent = MentoringComment::findOrFail($id);
 
-        mentoring_comments::create([
+        MentoringComment::create([
             'mentoring_session_id' => $parent->mentoring_session_id,
             'parent_comment_id' => $id,
             'teacher_id' => $this->teacher->id,

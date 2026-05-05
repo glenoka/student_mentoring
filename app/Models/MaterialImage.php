@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class material_images extends Model
+class MaterialImage extends Model
 {
       use HasFactory;
-
+    protected $table='material_images';
     protected $fillable = [
         'material_id',
         'image_url',
@@ -17,6 +17,6 @@ class material_images extends Model
 
     public function material_image()
     {
-        return $this->belongsTo(learning_materials::class);
+        return $this->belongsTo(LearningMaterial::class);
     }
 }

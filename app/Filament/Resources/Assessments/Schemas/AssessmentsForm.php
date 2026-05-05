@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Assessments\Schemas;
 
-
+use App\Models\Student;
 use App\Models\students;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
@@ -17,7 +17,7 @@ class AssessmentsForm
             ->components([
                 Select::make('student_id')
                     ->label('Student')
-                    ->options(students::all()->pluck('name', 'id'))
+                    ->options(Student::all()->pluck('name', 'id'))
                     ->required(),
                 DatePicker::make('assessment_date')
                     ->label('Assessment Date')

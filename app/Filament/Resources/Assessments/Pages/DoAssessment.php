@@ -3,8 +3,9 @@
 namespace App\Filament\Resources\Assessments\Pages;
 
 use App\Filament\Resources\Assessments\AssessmentsResource;
-use App\Models\assessment_answers;
+use App\Models\AssessmentAnswer;
 use App\Models\assessments;
+use App\Models\Question;
 use App\Models\questions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -51,8 +52,8 @@ class DoAssessment extends Page implements HasForms
     }
     public function assessmentSchema(Schema $schema): Schema
     {
-        $numericQuestions = questions::where('type', 'numeric')->get();
-        $booleanQuestions = questions::where('type', 'boolean')->get();
+        $numericQuestions = Question::where('type', 'numeric')->get();
+        $booleanQuestions = Question::where('type', 'boolean')->get();
 
         $numericQuestionsMapped = $numericQuestions->values()->map(function ($question, $index) {
             return Section::make(($index + 1) . '. ' . $question->question_text)
@@ -142,7 +143,7 @@ class DoAssessment extends Page implements HasForms
                         $data = $this->data;
 
                         foreach ($data['answers_boolean'] as $questionId => $value) {
-                            assessment_answers::create([
+                            AssessmentAnswer::create([
                                 'assessment_id' => $this->assessmentID,
                                 'question_id' => $questionId,
                                 'boolean_value' => (bool) $value,
@@ -153,7 +154,7 @@ class DoAssessment extends Page implements HasForms
 
                         // Simpan jawaban numeric
                         foreach ($data['answers_numeric'] as $questionId => $value) {
-                            assessment_answers::create([
+                            AssessmentAnswer::create([
                                 'assessment_id' => $this->assessmentID,
                                 'question_id' => $questionId,
                                 'numeric_value' => $value,

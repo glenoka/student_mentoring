@@ -43,7 +43,7 @@ class StudentTopicsTable
                 Action::make('start')
                 ->label('Start')
                 ->icon('heroicon-o-play')
-                ->color('success')
+                ->color('warning')
                 ->visible(fn ($record) => blank($record->mentoringSessions))
                 ->url(fn($record) => StudentTopicsResource::getUrl('mentoring-session', [
                         'record' => $record,

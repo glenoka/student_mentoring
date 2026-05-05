@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class mentoring_comments extends Model
+class MentoringComment extends Model
 {
    use HasFactory;
 
+   protected $table='mentoring_comments';
     protected $fillable = [
         'mentoring_session_id',
         'parent_id',
@@ -25,12 +26,12 @@ class mentoring_comments extends Model
 
     public function session()
     {
-        return $this->belongsTo(mentoring_session::class, 'mentoring_session_id');
+        return $this->belongsTo(MentoringSession::class, 'mentoring_session_id');
     }
 
     public function parent()
     {
-        return $this->belongsTo(parents::class, 'parent_id');
+        return $this->belongsTo(Parents::class, 'parent_id');
     }
 
     public function teacher()
@@ -41,7 +42,7 @@ class mentoring_comments extends Model
     // Threading
     public function parentComment()
     {
-        return $this->belongsTo(mentoring_comments::class, 'parent_comment_id');
+        return $this->belongsTo(MentoringComment::class, 'parent_comment_id');
     }
 
     public function replies()

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Assessments\Pages;
 
 use App\Filament\Resources\Assessments\AssessmentsResource;
-use App\Models\assessments;
+use App\Models\Assessments;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -19,7 +19,7 @@ class CreateAssessments extends CreateRecord
     public function mutateFormDataBeforeCreate(array $data): array
     {
         $student_id = $data['student_id'];
-        $checkExistingAssessment = assessments::where('student_id', $student_id)->exists();
+        $checkExistingAssessment = Assessments::where('student_id', $student_id)->exists();
        
         if ($checkExistingAssessment) {
            Notification::make()

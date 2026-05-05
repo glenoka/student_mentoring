@@ -10,7 +10,8 @@ use App\Filament\Resources\Assessments\Pages\ListAssessments;
 use App\Filament\Resources\Assessments\Pages\StudentTopic;
 use App\Filament\Resources\Assessments\Schemas\AssessmentsForm;
 use App\Filament\Resources\Assessments\Tables\AssessmentsTable;
-use App\Models\assessments as ModelsAssessments;
+use App\Models\Assessment;
+use App\Models\assessments;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -21,7 +22,7 @@ use UnitEnum;
 
 class AssessmentsResource extends Resource
 {
-    protected static ?string $model = ModelsAssessments::class;
+    protected static ?string $model = Assessments::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMagnifyingGlassCircle;
     protected static ?string $navigationLabel = 'Assessment';

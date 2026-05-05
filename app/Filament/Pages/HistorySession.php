@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Filament\Exports\MonitoringSessionExporter;
 use App\Models\mentoring_session;
+use App\Models\MentoringSession;
 use BackedEnum;
 use Barryvdh\DomPDF\Facade\Pdf;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
@@ -46,7 +47,7 @@ class HistorySession extends Page implements HasActions, HasSchemas, HasTable
             ->query(function () {
                 $user = auth()->user();
 
-                $query = mentoring_session::query()
+                $query = MentoringSession::query()
                     ->with('studentTopic.student', 'studentTopic.topic', 'user.teacher');
 
                 if ($user->hasRole('User')) {

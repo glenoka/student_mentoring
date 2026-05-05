@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\Assessments\Widgets;
 
-use App\Models\assessments;
+
+use App\Models\Assessments as ModelsAssessments;
 use Carbon\Carbon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Columns\Column;
@@ -17,7 +18,7 @@ class AssessmentThisMonth extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => assessments::query()
+            ->query(fn (): Builder => ModelsAssessments::query()
              ->whereMonth('created_at', now()->month)
     ->whereYear('created_at', now()->year))
             ->columns([

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class students extends Model
+class Student extends Model
 {
   use SoftDeletes;
 
@@ -16,16 +16,16 @@ class students extends Model
     ];
     public function parent()
     {
-        return $this->belongsTo(parents::class, 'parent_id');
+        return $this->belongsTo(Parents::class, 'parent_id');
     }
 
     public function assessments()
     {
-        return $this->hasMany(assessments::class);
+        return $this->hasMany(Assessments::class);
     }
 
     public function studentTopics()
     {
-        return $this->hasMany(student_topics::class);
+        return $this->hasMany(StudentTopic::class);
     }
 }

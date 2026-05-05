@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Assessments\Widgets;
 
-use App\Models\assessments;
+use App\Models\Assessments;
 use Filament\Widgets\ChartWidget;
 
 class AssessmentCount extends ChartWidget
@@ -11,7 +11,7 @@ class AssessmentCount extends ChartWidget
 
     protected function getData(): array
     {
-        $data = assessments::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+        $data = Assessments::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
         ->groupBy('month')
         ->orderBy('month')
         ->pluck('total', 'month');

@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class learning_materials extends Model
+class LearningMaterial extends Model
 {
    use HasFactory;
-
+    protected $table='learning_materials';
     protected $fillable = [
         //'topic_id',
         'title',
@@ -20,16 +20,16 @@ class learning_materials extends Model
 
     public function topic()
     {
-        return $this->belongsTo(topics::class);
+        return $this->belongsTo(Topics::class);
     }
 
     public function images()
     {
-        return $this->hasMany(material_images::class);
+        return $this->hasMany(MaterialImage::class);
     }
     public function videos()
     {
-        return $this->hasMany(material_videos::class);
+        return $this->hasMany(MaterialImage::class);
     }
     public function getRouteKeyName()
 {

@@ -47,7 +47,7 @@ class User extends Authenticatable
     }
     public function mentoringSessions()
 {
-    return $this->hasMany(mentoring_session::class);
+    return $this->hasMany(MentoringSession::class);
 }
 public function getRoleNameAttribute()
 {

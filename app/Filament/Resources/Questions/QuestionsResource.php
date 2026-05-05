@@ -7,6 +7,7 @@ use App\Filament\Resources\Questions\Pages\EditQuestions;
 use App\Filament\Resources\Questions\Pages\ListQuestions;
 use App\Filament\Resources\Questions\Schemas\QuestionsForm;
 use App\Filament\Resources\Questions\Tables\QuestionsTable;
+use App\Models\Question;
 use App\Models\Questions;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,7 +18,7 @@ use UnitEnum;
 
 class QuestionsResource extends Resource
 {
-    protected static ?string $model = Questions::class;
+    protected static ?string $model = Question::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQuestionMarkCircle;
     protected static ?string $navigationLabel = 'Data Pertanyaan';

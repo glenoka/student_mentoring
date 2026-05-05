@@ -4,9 +4,11 @@ namespace App\Filament\Resources\Assessments\Tables;
 
 use App\Filament\Resources\Assessments\AssessmentsResource;
 use App\Filament\Resources\Assessments\Pages\DoAssessment;
-use App\Models\assessments;
+use App\Models\Assessments;
 use App\Models\student_topics;
+use App\Models\StudentTopic;
 use App\Models\topics;
+use App\Models\Topics as ModelsTopics;
 use Filament\Actions\Action;
 use Filament\Actions\ActionsServiceProvider;
 use Filament\Actions\BulkActionGroup;
@@ -57,13 +59,13 @@ class AssessmentsTable
                     ->label('Assessment')
                     ->icon('heroicon-o-document-text')
                     ->color('success')
-                    ->hidden(fn(assessments $record): string => $record->status === 'finished')
+                    ->hidden(fn(Assessments $record): string => $record->status === 'finished')
                     ->url(fn($record) => AssessmentsResource::getUrl('assessment', [
                         'record' => $record,
                     ]))
                     ->openUrlInNewTab(),
                 Action::make('detail')
-                ->hidden(fn(assessments $record): string => $record->status === 'not_started')
+                ->hidden(fn(Assessments $record): string => $record->status === 'not_started')
                     ->label('Detail')
                     ->icon('heroicon-o-eye')
                     ->color('primary')
@@ -71,9 +73,9 @@ class AssessmentsTable
                         'record' => $record,
                     ])),
                 Action::make('topic')
-                ->hidden(fn(assessments $record): string => $record->status === 'not_started')
+                ->hidden(fn(Assessments $record): string => $record->status === 'not_started')
                     ->fillForm(fn($record) => [
-                        'topics' => student_topics::where('assessment_id', $record->id)
+                        'topics' => StudentTopic::where('assessment_id', $record->id)
                             ->get()
                             ->map(fn($item) => [
                                 'id' => $item->id,
@@ -93,13 +95,13 @@ class AssessmentsTable
 
                                 Select::make('topic_id')
                                     ->label('Pilih Topik')
-                                    ->options(topics::pluck('title', 'id')->toArray())
+                                    ->options(ModelsTopics::pluck('title', 'id')->toArray())
                                     ->searchable()
                                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                     ->live()
                                     ->afterStateUpdated(function ($state, $record, $get) {
                                         $studentTopicId = $get('id');
-                                        student_topics::updateOrCreate(
+                                        StudentTopic::updateOrCreate(
                                             [
                                                 'id' => $studentTopicId,
                                                 'assessment_id' => $record->id,
@@ -132,7 +134,7 @@ class AssessmentsTable
 
                                         // hapus database
                                         if (!empty($row['id'])) {
-                                            student_topics::where('id', $row['id'])->delete();
+                                            StudentTopic::where('id', $row['id'])->delete();
                                             Notification::make()
                                                 ->title('Topik berhasil dihapus')
                                                 ->success()

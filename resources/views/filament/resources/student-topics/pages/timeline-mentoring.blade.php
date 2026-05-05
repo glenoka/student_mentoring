@@ -152,7 +152,7 @@
                             <div class="space-y-4 max-h-[500px] overflow-y-auto">
 
                                 @php
-                                    $comments = \App\Models\mentoring_comments::query()
+                                    $comments = \App\Models\MentoringComment::query()
                                         ->with(['teacher', 'parent'])
                                         ->where('parent_comment_id', $item['id'])
                                         ->latest()

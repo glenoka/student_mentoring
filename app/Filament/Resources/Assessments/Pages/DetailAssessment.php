@@ -5,7 +5,9 @@ namespace App\Filament\Resources\Assessments\Pages;
 use App\Filament\Resources\Assessments\AssessmentsResource;
 use App\Models\assessments;
 use App\Models\student_topics;
+use App\Models\StudentTopic;
 use App\Models\topics;
+use App\Models\Topics as ModelsTopics;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -36,9 +38,9 @@ class DetailAssessment extends Page
     public function mount($record): void
     {
 
-        $this->record = assessments::with(['student', 'answers.question'])->where('uuid', $record)->firstOrFail();
+        $this->record = Assessments::with(['student', 'answers.question'])->where('uuid', $record)->firstOrFail();
 
-        $this->data['topics'] = student_topics::where('assessment_id', $this->record->id)
+        $this->data['topics'] = StudentTopic::where('assessment_id', $this->record->id)
             ->get()
             ->map(fn($item) => [
                 'id'       => $item->id,
@@ -174,17 +176,18 @@ class DetailAssessment extends Page
                                 Repeater::make('topics')
                                     ->label('Daftar Topik')
                                     ->live()
+                                    ->reorderable(false)
                                     ->schema([
 
                                         Select::make('topic_id')
                                             ->label('Pilih Topik')
-                                            ->options(topics::pluck('title', 'id')->toArray())
+                                            ->options(ModelsTopics::pluck('title', 'id')->toArray())
                                             ->searchable()
                                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                             ->live()
                                             ->afterStateUpdated(function ($state, $record, $get) {
                                                 $this->studentTopicId = $get('id');
-                                                student_topics::updateOrCreate(
+                                                StudentTopic::updateOrCreate(
                                                     [
                                                         'id' => $this->studentTopicId,
                                                         'assessment_id' => $record->id,
@@ -217,7 +220,7 @@ class DetailAssessment extends Page
 
                                                 // hapus database
                                                 if (!empty($row['id'])) {
-                                                    student_topics::where('id', $row['id'])->delete();
+                                                    StudentTopic::where('id', $row['id'])->delete();
                                                     Notification::make()
                                                         ->title('Topik berhasil dihapus')
                                                         ->success()

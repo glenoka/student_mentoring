@@ -20,7 +20,7 @@ use UnitEnum;
 
 class LearningMaterialResource extends Resource
 {
-    protected static ?string $model = learning_materials::class;
+    protected static ?string $model = LearningMaterial::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
 protected static ?string $navigationLabel = 'Learning Material';

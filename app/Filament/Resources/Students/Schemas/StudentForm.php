@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Students\Schemas;
 
+use App\Models\Parents;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -24,7 +25,7 @@ class StudentForm
             Select::make('parent_id')
                    ->label('Parent')
                     ->options(function () {
-                        return \App\Models\parents::pluck('name', 'id');
+                        return Parents::pluck('name', 'id');
                     })
                     ->searchable()
                     ->preload()

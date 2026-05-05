@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Question;
 
-class assessment_answers extends Model
+class AssessmentAnswer extends Model
 {
     use HasFactory;
-
+    protected $table='assessment_answers';
     protected $fillable = [
         'assessment_id',
         'question_id',
@@ -23,12 +24,12 @@ class assessment_answers extends Model
 
     public function assessment()
     {
-        return $this->belongsTo(assessments::class,);
+        return $this->belongsTo(Assessments::class,);
     }
 
     public function question()
     {
-        return $this->belongsTo(questions::class);
+        return $this->belongsTo(Question::class);
     }
 
     // Helper biar gampang ambil value

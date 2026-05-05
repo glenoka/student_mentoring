@@ -2,8 +2,7 @@
 
 namespace App\Filament\Exports;
 
-use App\Models\mentoring_session;
-use App\Models\MonitoringSession;
+use App\Models\MentoringSession;
 use Carbon\Carbon;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
@@ -13,7 +12,7 @@ use OpenSpout\Writer\XLSX\Options;
 
 class MonitoringSessionExporter extends Exporter
 {
-    protected static ?string $model = mentoring_session::class;
+    protected static ?string $model = MentoringSession::class;
 
     public static function getColumns(): array
     {
