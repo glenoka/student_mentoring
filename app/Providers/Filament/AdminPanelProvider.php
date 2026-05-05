@@ -2,8 +2,12 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
+
+use App\Filament\Pages\LoginTeacher;
+use App\Filament\Resources\Assessments\Widgets\AssessmentCount;
+use App\Filament\Resources\Assessments\Widgets\AssessmentThisMonth;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -29,8 +33,12 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->databaseNotifications()
+            ->brandLogo(asset('images/logo.png'))
+            ->brandLogoHeight('2rem')
+            ->brandName('InklusifEdu')
+            ->globalSearch(false)
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->login()
+            ->login(LoginTeacher::class)
             ->colors([
                 'primary' => Color::Emerald,
             ])
@@ -41,8 +49,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                //AccountWidget::class,
+                //FilamentInfoWidget::class,
+                AssessmentCount::class,
+                AssessmentThisMonth::class,
             ])
             ->middleware([
                 EncryptCookies::class,
