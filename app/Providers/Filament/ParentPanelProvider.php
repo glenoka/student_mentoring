@@ -30,7 +30,7 @@ class ParentPanelProvider extends PanelProvider
             ->path('parent')
             ->login(LoginParent::class)
             ->colors([
-                'primary' => Color::Indigo,
+                'primary' => '#071E48',
             ])
             ->discoverResources(in: app_path('Filament/Parent/Resources'), for: 'App\Filament\Parent\Resources')
             ->discoverPages(in: app_path('Filament/Parent/Pages'), for: 'App\Filament\Parent\Pages')
