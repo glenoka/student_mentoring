@@ -15,6 +15,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Width;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -34,6 +35,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->databaseNotifications()
             ->brandLogo(asset('images/logo.png'))
+            ->favicon(asset('images/logo.png'))
+             ->sidebarCollapsibleOnDesktop()
+                ->collapsedSidebarWidth('9rem')
             ->brandLogoHeight('2rem')
             ->brandName('InklusifEdu')
             ->globalSearch(false)
@@ -66,7 +70,9 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->plugins([
-                FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make()
+                     ->navigationLabel('Setting Access')     
+                      ->navigationGroup('Setting'),
             ])
             ->authMiddleware([
                 Authenticate::class,
