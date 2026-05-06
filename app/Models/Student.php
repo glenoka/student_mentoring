@@ -21,7 +21,7 @@ class Student extends Model
 
     public function assessments()
     {
-        return $this->hasMany(Assessments::class);
+        return $this->hasOne(Assessments::class);
     }
 
     public function studentTopics()
