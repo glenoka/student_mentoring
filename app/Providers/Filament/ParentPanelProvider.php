@@ -29,8 +29,13 @@ class ParentPanelProvider extends PanelProvider
             ->id('parent')
             ->path('parent')
             ->login(LoginParent::class)
+            ->brandLogo(asset('images/logo_edu.png'))
+            ->favicon(asset('images/logo.png'))
+             ->sidebarCollapsibleOnDesktop()
+                ->collapsedSidebarWidth('9rem')
+           ->brandLogoHeight('4rem')
             ->colors([
-                'primary' => '#071E48',
+                'primary' => Color::Blue,
             ])
             ->discoverResources(in: app_path('Filament/Parent/Resources'), for: 'App\Filament\Parent\Resources')
             ->discoverPages(in: app_path('Filament/Parent/Pages'), for: 'App\Filament\Parent\Pages')
