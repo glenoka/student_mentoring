@@ -4,6 +4,7 @@ namespace App\Filament\Parent\Pages;
 
 use App\Models\Parents;
 use App\Models\Student;
+use BackedEnum;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Page;
@@ -11,6 +12,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -19,6 +21,9 @@ class StudentView extends Page implements HasSchemas
     use InteractsWithSchemas;
 
     protected string $view = 'filament.parent.pages.student-view';
+     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserCircle;
+       protected static ?string $navigationLabel = 'Detail Siswa';
+       protected static ?string $title = 'Detail Siswa';
 
     public array $data = [];
     public $student;
@@ -77,7 +82,8 @@ class StudentView extends Page implements HasSchemas
                     ->columns(2)
                     ->collapsible(),
                 Section::make('Topic')
-                      ->description('Detail topik yang diambil')
+                    ->icon('heroicon-o-bookmark')
+                    ->description('Detail topik yang diambil')
                     ->schema([
                         RepeatableEntry::make('studentTopics')
                             ->label('Progress Pembelajaran')
@@ -86,7 +92,7 @@ class StudentView extends Page implements HasSchemas
 
                                 Section::make(fn($record) => $record->topic?->title ?? 'Topik')
                                     ->description('Detail perkembangan pembelajaran siswa')
-                                    ->icon('heroicon-o-academic-cap')
+                                    ->icon('heroicon-o-document')
                                     ->collapsed()
                                     ->schema([
 
@@ -102,27 +108,42 @@ class StudentView extends Page implements HasSchemas
                                             ->color(fn(?string $state): string => match ($state) {
                                                 'compdoneleted' => 'success',
                                                 'in_progress' => 'warning',
-                                              
+
                                                 default => 'gray',
                                             }),
 
                                         TextEntry::make('mentoringSessions.session_date')
-                                            ->label('Tanggal Sesi')
+                                            ->label('Sesi Pertama')
                                             ->date('d M Y')
-                                          ->visible(fn ($state) => filled($state))
+                                            ->visible(fn($state) => filled($state))
                                             ->icon('heroicon-o-calendar-days'),
 
                                         TextEntry::make('comments_count')
-                                            ->label('Komentar')
-                                            ->state(
-                                                fn($record) =>
-                                                $record->mentoringSessions?->comments()->count() ?? 0
-                                            )
+                                            ->label('Jumlah Sesi ')
+                                            ->state(function ($record) {
+
+                                                return $record->mentoringSessions->comments
+
+                                                    ->whereNull('parent_comment_id')
+                                                    ->count();
+                                            })
                                             ->badge()
                                             ->color('info')
-                                            ->icon('heroicon-o-chat-bubble-left-right')
-                                            ->formatStateUsing(fn($state) => $state . ' Komentar')
-                                            ->columnSpanFull(),
+                                            ->formatStateUsing(fn($state) => $state . ' Sesi'),
+                                        TextEntry::make('last_session')
+                                            ->label('Sesi Terakhir')
+                                            ->state(function ($record) {
+
+                                                $latestComment=$record->mentoringSessions->comments
+                                                    ->whereNull('parent_comment_id')
+                                                    ->sortByDesc('created_at')
+                                                    ->first();
+
+                                                return $latestComment?->created_at;
+                                            })
+                                           ->date('d M Y')
+                                            ->visible(fn($state) => filled($state))
+                                            ->icon('heroicon-o-calendar-days'),
 
                                     ])
                                     ->columns(2)
@@ -132,6 +153,4 @@ class StudentView extends Page implements HasSchemas
                     ])
             ]);
     }
-
-
 }

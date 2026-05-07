@@ -38,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('images/logo.png'))
              ->sidebarCollapsibleOnDesktop()
                 ->collapsedSidebarWidth('9rem')
-            ->brandLogoHeight('9rem')
+            ->brandLogoHeight('4rem')
             ->brandName('InklusifEdu')
             ->globalSearch(false)
             ->viteTheme('resources/css/filament/admin/theme.css')
