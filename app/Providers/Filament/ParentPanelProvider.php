@@ -28,6 +28,7 @@ class ParentPanelProvider extends PanelProvider
         return $panel
             ->id('parent')
             ->path('parent')
+            ->viteTheme('resources/css/filament/parent/theme.css')
             ->login(LoginParent::class)
             ->brandLogo(asset('images/logo_edu.png'))
             ->favicon(asset('images/logo.png'))

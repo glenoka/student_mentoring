@@ -2,13 +2,16 @@
 
 namespace App\Filament\Parent\Pages;
 
+use App\Models\Assessments;
 use App\Models\Parents;
 use App\Models\Student;
 use BackedEnum;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -21,12 +24,15 @@ class StudentView extends Page implements HasSchemas
     use InteractsWithSchemas;
 
     protected string $view = 'filament.parent.pages.student-view';
-     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserCircle;
-       protected static ?string $navigationLabel = 'Detail Siswa';
-       protected static ?string $title = 'Detail Siswa';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserCircle;
+    protected static ?string $navigationLabel = 'Detail Siswa';
+    protected static ?string $title = 'Detail Siswa';
 
     public array $data = [];
     public $student;
+     public $record;
+     public $booleanAnswers;
+     public $numericAnswers;
     public function mount(): void
     {
         $parentID = Parents::where('user_id', Auth::user()->id)->first();
@@ -35,16 +41,24 @@ class StudentView extends Page implements HasSchemas
             ->with('assessments.answers.question', 'studentTopics.topic', 'studentTopics.mentoringSessions.comments')
             ->first();
 
-        //dd($this->student);
-
-
+      
+ $this->record = Assessments::with(['student', 'answers.question'])->where('student_id', $this->student->id)->firstOrFail();
+// dd($this->record);
 
         // Fill data as array for the schema
         $this->data = $this->student?->toArray() ?? [];
+
+          $answers = $this->record->answers->load('question');
+
+        $this->numericAnswers = $answers->filter(fn($a) => $a->question->type === 'numeric');
+      
+        $this->booleanAnswers = $answers->filter(fn($a) => $a->question->type === 'boolean');
+
     }
 
     public function studentDetail(Schema $schema): Schema
     {
+      
 
         return $schema
             ->record($this->student)
@@ -81,6 +95,12 @@ class StudentView extends Page implements HasSchemas
                     ])
                     ->columns(2)
                     ->collapsible(),
+                Section::make('Hasil Assessment')
+                    ->icon('heroicon-o-bookmark')
+                    ->description('Detail topik yang diambil')
+                    ->schema( [ View::make('filament.parent.pages.assessments-result')]
+                           
+                    ),
                 Section::make('Topic')
                     ->icon('heroicon-o-bookmark')
                     ->description('Detail topik yang diambil')
@@ -122,7 +142,7 @@ class StudentView extends Page implements HasSchemas
                                             ->label('Jumlah Sesi ')
                                             ->state(function ($record) {
 
-                                                return $record->mentoringSessions->comments
+                                                return $record->mentoringSessions?->comments
 
                                                     ->whereNull('parent_comment_id')
                                                     ->count();
@@ -134,14 +154,14 @@ class StudentView extends Page implements HasSchemas
                                             ->label('Sesi Terakhir')
                                             ->state(function ($record) {
 
-                                                $latestComment=$record->mentoringSessions->comments
+                                                $latestComment = $record->mentoringSessions?->comments
                                                     ->whereNull('parent_comment_id')
                                                     ->sortByDesc('created_at')
                                                     ->first();
 
                                                 return $latestComment?->created_at;
                                             })
-                                           ->date('d M Y')
+                                            ->date('d M Y')
                                             ->visible(fn($state) => filled($state))
                                             ->icon('heroicon-o-calendar-days'),
 
