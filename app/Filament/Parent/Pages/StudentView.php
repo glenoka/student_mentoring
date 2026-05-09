@@ -52,7 +52,7 @@ class StudentView extends Page implements HasSchemas
 
         $this->numericAnswers = $answers->filter(fn($a) => $a->question->type === 'numeric');
       
-        $this->booleanAnswers = $answers->filter(fn($a) => $a->question->type === 'boolean');
+        $this->booleanAnswers = $answers->filter(fn($a) => $a->question->type === 'boolean' && $a->boolean_value == 1);
 
     }
 
@@ -98,9 +98,14 @@ class StudentView extends Page implements HasSchemas
                 Section::make('Hasil Assessment')
                     ->icon('heroicon-o-bookmark')
                     ->description('Detail topik yang diambil')
-                    ->schema( [ View::make('filament.parent.pages.assessments-result')]
-                           
-                    ),
+                    ->schema( [ 
+                        View::make('filament.parent.pages.assessments-result')
+            ->viewData([
+                'booleanAnswers' => $this->booleanAnswers,
+                'numericAnswers' => $this->numericAnswers,
+            ]),
+                        
+                        ]),
                 Section::make('Topic')
                     ->icon('heroicon-o-bookmark')
                     ->description('Detail topik yang diambil')
