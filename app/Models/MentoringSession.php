@@ -10,7 +10,7 @@ class MentoringSession extends Model
 {
     use HasFactory;
 
-    protected $table='mentoring_sessions';
+    //protected $table='mentoring_sessions';
     protected $fillable = [
         'user_id',
         'student_topic_id',
@@ -38,6 +38,20 @@ class MentoringSession extends Model
     {
         return $this->hasMany(MentoringComment::class);
     }
+   public function latestComment()
+{
+    return $this->hasOne(MentoringComment::class)
+        ->whereNull('parent_comment_id')
+        ->first();
+}
+
+  public function countComments()
+{
+   return $this->comments()
+        ->whereNull('parent_comment_id')
+        ->count();
+
+}
 
     protected static function booted(): void
 {
