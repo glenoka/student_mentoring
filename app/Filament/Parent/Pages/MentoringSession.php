@@ -75,7 +75,8 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
                         'done' => 'Finished',
                         'in_progress' => 'On Progress',
                     }),
-                   TextColumn::make('mentoringSession.latestComment.comment')
+                   TextColumn::make('mentoringSessions.latestComment.message')
+                   ->html()
     ->label('Latest Comment')
      ->placeholder('-')
 
@@ -86,6 +87,8 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
             ])
             ->recordActions([
                 Action::make('Lanjut')
+                ->url(fn (StudentTopic $record) => route('parent.mentoring-session-detail', ['studentTopic' => $record->uuid]))
+                ->openUrlInNewTab()
             ])
             ->toolbarActions([
                 // ...

@@ -38,11 +38,11 @@ class MentoringSession extends Model
     {
         return $this->hasMany(MentoringComment::class);
     }
-   public function latestComment()
+ public function latestComment()
 {
     return $this->hasOne(MentoringComment::class)
         ->whereNull('parent_comment_id')
-        ->first();
+        ->latestOfMany();
 }
 
   public function countComments()
