@@ -6,6 +6,7 @@ use App\Models\MentoringComment;
 use App\Models\MentoringSession as MentoringSessionModel;
 use App\Models\Parents;
 use App\Models\StudentTopic;
+use BackedEnum;
 use Date;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -22,16 +23,25 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Tiptap\Editor;
 
 class MentoringSessionComments extends Page
 {
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCheckBadge;
   public $studentTopic;
     public array $sessions = [];
     public ?array $data = [];
     public $lastSession;
     public $parent;
+    public ?array $session_details = [
+        'message' => '',
+        'progress_status' => 'progressing',
+
+    ];
+  protected static ?string $navigationLabel = 'Parent Mentoring';
+  protected static ?string $pluralModelLabel = 'Sesi Mentoring Orang Tua';
 
     protected string $view = 'filament.parent.pages.mentoring-session-comments';
     protected static bool $shouldRegisterNavigation = false;
@@ -59,49 +69,49 @@ class MentoringSessionComments extends Page
     
     }
 
-   protected function getHeaderActions(): array
-{
-    return [
+//    protected function getHeaderActions(): array
+// {
+//     return [
 
-        Action::make('newSession')
-            ->label('New Session')
-            ->icon('heroicon-m-plus')
-            ->modalHeading('Buat Session Mentoring')
-            ->modalSubmitActionLabel('Simpan')
-            ->form([
-                DatePicker::make('session_date')
-                    ->label('Tanggal Sesi')
-                    ->required()
-                    ->default(now()),
-                RichEditor::make('message')
-                    ->label('Comment / Catatan')
-                    ->required()
-                    ->placeholder('Masukkan catatan mentoring...')
-                    ->columnSpanFull(),
+//         Action::make('newSession')
+//             ->label('New Session')
+//             ->icon('heroicon-m-plus')
+//             ->modalHeading('Buat Session Mentoring')
+//             ->modalSubmitActionLabel('Simpan')
+//             ->form([
+//                 DatePicker::make('session_date')
+//                     ->label('Tanggal Sesi')
+//                     ->required()
+//                     ->default(now()),
+//                 RichEditor::make('message')
+//                     ->label('Comment / Catatan')
+//                     ->required()
+//                     ->placeholder('Masukkan catatan mentoring...')
+//                     ->columnSpanFull(),
 
-            ])
+//             ])
 
-            ->action(function (array $data) {
+//             ->action(function (array $data) {
 
-                MentoringComment::create([
-                    'message' => $data['message'],
-                    'mentoring_session_id' => $this->studentTopic->mentoringSessions->id,
-                    'parent_comment_id' => null,
-                    'parent_id' => $this->parent->id,
-                    'progress_status' => 'progressing',
-                ]);
-                 Notification::make()
-                    ->title('Session berhasil dibuat')
-                    ->body('Catatan mentoring baru telah ditambahkan.')
-                    ->success()
-                    ->send();
+//                 MentoringComment::create([
+//                     'message' => $data['message'],
+//                     'mentoring_session_id' => $this->studentTopic->mentoringSessions->id,
+//                     'parent_comment_id' => null,
+//                     'parent_id' => $this->parent->id,
+//                     'progress_status' => 'progressing',
+//                 ]);
+//                  Notification::make()
+//                     ->title('Session berhasil dibuat')
+//                     ->body('Catatan mentoring baru telah ditambahkan.')
+//                     ->success()
+//                     ->send();
 
-                     $this->loadSessions();
+//                      $this->loadSessions();
 
-            }),
+//             }),
 
-    ];
-}
+//     ];
+// }
     public function loadSessions(): array
     {
         $sessionId = $this->studentTopic->mentoringSessions?->id;
@@ -200,7 +210,7 @@ class MentoringSessionComments extends Page
 
                                                 TextEntry::make('mentoringSessions.end_date')
                                                     ->date()
-                                                    ->hidden(fn() => $this->studentTopic?->status === 'on_progress')
+                                                    ->hidden(fn() => $this->studentTopic?->status === 'in_progress')
                                                     ->label('Tanggal Selesai')
                                             ])->columns(2),
 
@@ -326,10 +336,11 @@ class MentoringSessionComments extends Page
                                                         $editor = new Editor();
                                                         $html = $editor->setContent($json)->getHTML();
 
+                                                        
                                                         $dataCreate = [
                                                             'mentoring_session_id' => $this->studentTopic->mentoringSessions->id,
                                                             'message' => $html,
-                                                            'teacher_id' => $this->teacher->teacher->id,
+                                                             'parent_id' => $this->parent->id,
                                                             'progress_status' => $this->session_details['progress_status'] ?? null,
                                                         ];
 
@@ -358,7 +369,7 @@ class MentoringSessionComments extends Page
                                         Section::make('Session Notes')
 
                                             ->schema([
-                                                View::make('filament.resources.student-topics.pages.timeline-mentoring')
+                                                View::make('filament.parent.pages.timeline-mentoring')
 
                                             ])->columns(1),
                                     ])

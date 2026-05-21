@@ -2,16 +2,19 @@
 
 namespace App\Filament\Parent\Pages;
 
+use App\Filament\Parent\Pages\MentoringSessionComments;
+use App\Models\MentoringSession as ModelMentoringSession;
 use App\Models\Parents;
 use App\Models\Student;
-use App\Models\MentoringSession as ModelMentoringSession;
 use App\Models\StudentTopic;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Pages\Page;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -25,11 +28,15 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
     use InteractsWithSchemas;
     use InteractsWithTable;
 
+protected static ?string $pluralModelLabel = 'Parent Mentoring';
+  protected static ?string $navigationLabel = 'Parent Mentoring';
+  protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCheckBadge;
+
     protected string $view = 'filament.parent.pages.mentoring-session';
     public $student;
     public function mount()
     {
-
+      
         $parentID = Parents::where('user_id', Auth::user()->id)->first();
 
         $student = Student::query();
@@ -41,6 +48,7 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
             ->where('parent_id', $parentID->id)
             ->firstOrFail();
 
+        //dd($this->student->studentTopics->mentoringSessions);
 
     }
     protected function getTables(): array
@@ -54,7 +62,7 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
         return $table
             ->query(
                 StudentTopic::query()
-
+                    ->with('topic', 'mentoringSessions.latestComment')
                     ->where('student_id', $this->student->id)
             )
             ->columns([
@@ -76,9 +84,7 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
                         'in_progress' => 'On Progress',
                     }),
                 TextColumn::make('mentoringSessions.latestComment.message')
-                    ->html()
-                    ->label('Latest Comment')
-                    ->placeholder('-')
+                    ->html(),
 
             ])
             ->filters([

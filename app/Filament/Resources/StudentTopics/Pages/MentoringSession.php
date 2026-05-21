@@ -219,7 +219,7 @@ class MentoringSession extends Page implements HasForms
 
                                                 TextEntry::make('mentoringSessions.end_date')
                                                     ->date()
-                                                    ->hidden(fn() => $this->studentTopic?->status === 'on_progress')
+                                                    ->hidden(fn() => $this->studentTopic?->status === 'in_progress')
                                                     ->label('Tanggal Selesai')
                                             ])->columns(2),
 

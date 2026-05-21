@@ -16,15 +16,8 @@
 
         @forelse($this->sessions as $item)
             @php
-                $badge = match ($item['progress_status']) {
-                    'pending_support' => ['Perlu Pendampingan', 'danger'],
-                    'developing' => ['Sedang Berkembang', 'gray'],
-                    'reinforcement' => ['Perlu Penguatan', 'warning'],
-                    'progressing' => ['Menunjukkan Perkembangan', 'info'],
-                    'good' => ['Baik', 'success'],
-                    'excellent' => ['Sangat Baik', 'primary'],
-                    default => ['-', 'gray'],
-                };
+              
+               
 
                 $commentCount = $item['comment_count'] ?? 0;
             @endphp
@@ -125,22 +118,31 @@
                         {{-- Modal Comment --}}
                         {{-- Comment --}}
                         <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+                                    <div class="flex items-center justify-between">
 
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-semibold text-gray-900 dark:text-white">
-                                    Comment
-                                </span>
+                                        <div>
+                                            <div class="text-sm font-semibold text-gray-900 dark:text-white">
+                                                Diskusi
+                                            </div>
 
-                                <button type="button" x-data
-                                    x-on:click="$dispatch('open-modal', { id: 'comment-modal-{{ $item['id'] }}' })"
-                                    class="inline-flex items-center gap-2">
-                                    <x-filament::badge color="info">
-                                        {{ $commentCount }}
-                                    </x-filament::badge>
-                                </button>
-                            </div>
+                                            <div class="text-xs text-gray-500">
+                                                {{ $commentCount }} komentar
+                                            </div>
+                                        </div>
 
-                        </div>
+                                        <button type="button" x-data
+                                            x-on:click="$dispatch('open-modal', { id: 'comment-modal-{{ $item['id'] }}' })"
+                                            class="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-primary-600 transition font-medium">
+                                            <x-heroicon-m-chat-bubble-left-right class="w-4 h-4" />
+
+                                            <span>Reply</span>
+
+                                          
+                                        </button>
+
+                                    </div>
+
+                                </div>
 
                         {{-- Modal Per Session --}}
                         <x-filament::modal id="comment-modal-{{ $item['id'] }}" width="3xl">

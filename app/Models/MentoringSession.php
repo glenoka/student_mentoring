@@ -38,11 +38,18 @@ class MentoringSession extends Model
     {
         return $this->hasMany(MentoringComment::class);
     }
- public function latestComment()
+public function latestComment()
 {
     return $this->hasOne(MentoringComment::class)
-        ->whereNull('parent_comment_id')
-        ->latestOfMany();
+        ->ofMany(
+            // Argumen 1: Tentukan kolom pengurutan untuk mencari yang terbaru
+            ['id' => 'max'], 
+            
+            // Argumen 2: Terapkan filter whereNull di sini
+            function ($query) {
+                $query->whereNull('parent_comment_id');
+            }
+        );
 }
 
   public function countComments()
