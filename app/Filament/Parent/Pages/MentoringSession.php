@@ -29,10 +29,10 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
     public $student;
     public function mount()
     {
-     
+
         $parentID = Parents::where('user_id', Auth::user()->id)->first();
 
-        $student=Student::query();
+        $student = Student::query();
         $this->student = $student->with([
             'assessments.answers.question',
             'studentTopics.topic',
@@ -41,7 +41,7 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
             ->where('parent_id', $parentID->id)
             ->firstOrFail();
 
-      
+
     }
     protected function getTables(): array
     {
@@ -75,20 +75,37 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
                         'done' => 'Finished',
                         'in_progress' => 'On Progress',
                     }),
-                   TextColumn::make('mentoringSessions.latestComment.message')
-                   ->html()
-    ->label('Latest Comment')
-     ->placeholder('-')
+                TextColumn::make('mentoringSessions.latestComment.message')
+                    ->html()
+                    ->label('Latest Comment')
+                    ->placeholder('-')
 
             ])
             ->filters([
-                
+
                 // ...
             ])
             ->recordActions([
                 Action::make('Lanjut')
-                ->url(fn (StudentTopic $record) => route('parent.mentoring-session-detail', ['studentTopic' => $record->uuid]))
-                ->openUrlInNewTab()
+                 ->label(fn (StudentTopic $record) =>
+                    $record->mentoringSessions()->exists()
+                        ? 'Continue Session'
+                        : 'New Session'
+                )
+                    ->url(fn(StudentTopic $record) => MentoringSessionComments::getUrl([
+                        'uuid' => $record->uuid,
+                    ]))
+                     ->icon(fn (StudentTopic $record) =>
+        $record->mentoringSessions()->exists()
+            ? 'heroicon-o-arrow-right'
+            : 'heroicon-o-plus'
+    )
+
+    ->color(fn (StudentTopic $record) =>
+        $record->mentoringSessions()->exists()
+            ? 'primary'
+            : 'success'
+                    ),
             ])
             ->toolbarActions([
                 // ...
