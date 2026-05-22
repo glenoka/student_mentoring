@@ -33,13 +33,22 @@ class StudentView extends Page implements HasSchemas
      public $record;
      public $booleanAnswers;
      public $numericAnswers;
-    public function mount(): void
+    public function mount()
     {
         $parentID = Parents::where('user_id', Auth::user()->id)->first();
-
+    
         $this->student = Student::where('parent_id', $parentID->id)
             ->with('assessments.answers.question', 'studentTopics.topic', 'studentTopics.mentoringSessions.comments')
             ->first();
+     if (!$this->student) {
+
+    abort(response()->view('errors.errorhandling', [
+            'code' => 404,
+            'title' => 'Student Not Found',
+            'message' => 'No student associated with the current parent was found. Please contact administrator for assistance.',
+        ], 404));
+}
+        
 
       
  $this->record = Assessments::with(['student', 'answers.question'])->where('student_id', $this->student->id)->firstOrFail();

@@ -21,29 +21,72 @@ protected function getDescription(): ?string
     return 'This shows the progress of student topics based on their mentoring sessions.';
 }
      protected function getStats(): array
-    {
-        $studentTopics = StudentTopic::with('topic','mentoringSessions')
-            ->where('student_id', 1)
-            ->get();
+{
+    $studentTopics = StudentTopic::with('topic', 'mentoringSessions')
+        ->where('student_id', Auth::user()->parents?->student->id)
+        ->get();
 
-        $stats = [];
+    $stats = [];
 
-        foreach ($studentTopics as $studentTopic) {
+    /*
+    |--------------------------------------------------------------------------
+    | ERROR HANDLING 1
+    | Tidak ada student topic sama sekali
+    |--------------------------------------------------------------------------
+    */
+    if ($studentTopics->isEmpty()) {
+
+        return [
+            Stat::make('No Topic', 'Belum Ada Topic')
+                ->description('Siswa belum memiliki topik pembelajaran')
+                ->color('gray')
+                ->icon('heroicon-o-book-open'),
+        ];
+    }
+
+    foreach ($studentTopics as $studentTopic) {
+
+        $latestSession = $studentTopic->mentoringSessions
+
+            ->first();
+
+        /*
+        |--------------------------------------------------------------------------
+        | ERROR HANDLING 2
+        | Tidak ada mentoring session
+        |--------------------------------------------------------------------------
+        */
+        if (!$latestSession) {
 
             $stats[] = Stat::make(
-                    'Title : '.$studentTopic->topic->title,
-                    $studentTopic->mentoringSessions?->status=='in_progress' ? 'Process' : 'Finished' 
-                   
+                    $studentTopic->topic->title,
+                    'No Session'
                 )
-                ->url(MentoringSessionComments::getUrl([
-                        'uuid' => $studentTopic->uuid,
-                    ]))
-                ->description($studentTopic->mentoringSessions->session_date->diffForHumans())
-                ->color($studentTopic->mentoringSessions->status=='in_progress' ? 'warning' : 'success')
-                ->chart([7, 2, 10, 3, 15, 4, 17])
-                ->icon('heroicon-o-book-open');
+                ->description('Belum ada mentoring session')
+                ->color('gray')
+                ->icon('heroicon-o-clock');
+
+            continue;
         }
 
-        return $stats;
+        $stats[] = Stat::make(
+                $studentTopic->topic->title,
+                $latestSession->status == 'in_progress'
+                    ? 'Process'
+                    : 'Finished'
+            )
+            ->description(
+                $latestSession->session_date?->diffForHumans()
+            )
+            ->color(
+                $latestSession->status == 'in_progress'
+                    ? 'warning'
+                    : 'success'
+            )
+             ->chart([7, 2, 10, 3, 15, 4, 17])
+            ->icon('heroicon-o-book-open');
     }
+
+    return $stats;
+}
 }

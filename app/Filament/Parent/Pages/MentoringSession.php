@@ -28,17 +28,23 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
     use InteractsWithSchemas;
     use InteractsWithTable;
 
-protected static ?string $pluralModelLabel = 'Parent Mentoring';
-  protected static ?string $navigationLabel = 'Parent Mentoring';
-  protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCheckBadge;
+    protected static ?string $pluralModelLabel = 'Parent Mentoring';
+    protected static ?string $navigationLabel = 'Parent Mentoring';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCheckBadge;
 
     protected string $view = 'filament.parent.pages.mentoring-session';
     public $student;
     public function mount()
     {
-      
-        $parentID = Parents::where('user_id', Auth::user()->id)->first();
 
+        $parentID = Parents::where('user_id', Auth::user()->id)->first();
+        if ($parentID->student == null) {
+            abort(response()->view('errors.errorhandling', [
+                'code' => 404,
+                'title' => 'Student Not Found',
+                'message' => 'No student associated with the current parent was found. Please contact administrator for assistance.',
+            ], 404));
+        }
         $student = Student::query();
         $this->student = $student->with([
             'assessments.answers.question',
@@ -47,9 +53,6 @@ protected static ?string $pluralModelLabel = 'Parent Mentoring';
         ])
             ->where('parent_id', $parentID->id)
             ->firstOrFail();
-
-        //dd($this->student->studentTopics->mentoringSessions);
-
     }
     protected function getTables(): array
     {
@@ -93,24 +96,27 @@ protected static ?string $pluralModelLabel = 'Parent Mentoring';
             ])
             ->recordActions([
                 Action::make('Lanjut')
-                 ->label(fn (StudentTopic $record) =>
-                    $record->mentoringSessions()->exists()
-                        ? 'Continue Session'
-                        : 'New Session'
-                )
+                    ->label(
+                        fn(StudentTopic $record) =>
+                        $record->mentoringSessions()->exists()
+                            ? 'Continue Session'
+                            : 'New Session'
+                    )
                     ->url(fn(StudentTopic $record) => MentoringSessionComments::getUrl([
                         'uuid' => $record->uuid,
                     ]))
-                     ->icon(fn (StudentTopic $record) =>
-        $record->mentoringSessions()->exists()
-            ? 'heroicon-o-arrow-right'
-            : 'heroicon-o-plus'
-    )
+                    ->icon(
+                        fn(StudentTopic $record) =>
+                        $record->mentoringSessions()->exists()
+                            ? 'heroicon-o-arrow-right'
+                            : 'heroicon-o-plus'
+                    )
 
-    ->color(fn (StudentTopic $record) =>
-        $record->mentoringSessions()->exists()
-            ? 'primary'
-            : 'success'
+                    ->color(
+                        fn(StudentTopic $record) =>
+                        $record->mentoringSessions()->exists()
+                            ? 'primary'
+                            : 'success'
                     ),
             ])
             ->toolbarActions([
