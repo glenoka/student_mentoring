@@ -38,7 +38,7 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
     {
 
         $parentID = Parents::where('user_id', Auth::user()->id)->first();
-        if ($parentID->student == null) {
+        if ($parentID->students == null) {
             abort(response()->view('errors.errorhandling', [
                 'code' => 404,
                 'title' => 'Student Not Found',

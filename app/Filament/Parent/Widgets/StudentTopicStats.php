@@ -22,8 +22,9 @@ protected function getDescription(): ?string
 }
      protected function getStats(): array
 {
+    $studentID=Auth::user()->parent?->students->first()->id;
     $studentTopics = StudentTopic::with('topic', 'mentoringSessions')
-        ->where('student_id', Auth::user()->parents?->student->id)
+        ->where('student_id', $studentID)
         ->get();
 
     $stats = [];
