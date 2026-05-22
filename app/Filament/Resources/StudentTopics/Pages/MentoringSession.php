@@ -80,6 +80,7 @@ class MentoringSession extends Page implements HasForms
         }
         $this->studentTopic = StudentTopic::where('uuid', $record)->with('mentoringSessions', 'student', 'assessment', 'topic')->first();
         $this->teacher = User::where('id', Auth::user()->id)->with('teacher')->first();
+       
 
         $this->loadSessions();
         //dd($this->loadSessions());
@@ -443,7 +444,7 @@ class MentoringSession extends Page implements HasForms
         MentoringComment::create([
             'mentoring_session_id' => $parent->mentoring_session_id,
             'parent_comment_id' => $id,
-            'teacher_id' => $this->teacher->id,
+            'teacher_id' => $this->teacher->teacher->id,
             'message' => $this->data['message'],
         ]);
 
