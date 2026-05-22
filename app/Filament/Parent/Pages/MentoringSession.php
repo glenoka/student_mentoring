@@ -73,7 +73,7 @@ class MentoringSession extends Page implements HasActions, HasSchemas, HasTable
                     ->label('Topic'),
                 TextColumn::make('mentoringSessions.session_date')
                     ->date('d-m-Y')
-                    ->label('Tanggal Mulai'),
+                    ->label('First Session Date'),
                 TextColumn::make('mentoringSessions.status')
                     ->label('Status')
                     ->badge()

@@ -41,7 +41,8 @@ class MentoringSessionComments extends Page
 
     ];
   protected static ?string $navigationLabel = 'Parent Mentoring';
-  protected static ?string $pluralModelLabel = 'Sesi Mentoring Orang Tua';
+  protected static ?string $pluralModelLabel = 'Parent Mentoring';
+    protected static ?string $title = 'Mentoring Session Comments';
 
     protected string $view = 'filament.parent.pages.mentoring-session-comments';
     protected static bool $shouldRegisterNavigation = false;
@@ -194,7 +195,7 @@ class MentoringSessionComments extends Page
                                                         default => 'gray',
                                                     }),
                                                 TextEntry::make('lastSession')
-                                                    ->label('Pertemuan Terakhir')
+                                                    ->label('Last Session')
                                                     ->live()
                                                     ->badge()
                                                     ->color('info')
@@ -206,16 +207,16 @@ class MentoringSessionComments extends Page
                                                     ->default('Belum ada sesi'),
                                                 TextEntry::make('mentoringSessions.session_date')
                                                     ->date()
-                                                    ->label('Tanggal Mulai'),
+                                                    ->label('Start Date'),
 
                                                 TextEntry::make('mentoringSessions.end_date')
                                                     ->date()
                                                     ->hidden(fn() => $this->studentTopic?->status === 'in_progress')
-                                                    ->label('Tanggal Selesai')
+                                                    ->label('End Date')
                                             ])->columns(2),
 
                                         Section::make('Learning Topic')
-                                            ->description('Detail materi pembelajaran untuk sesi ini.')
+                                            ->description('Information about the student\'s learning topic, including description, achievement targets, teaching strategies, and learning resources.')
                                             ->icon('heroicon-o-book-open')
                                             ->schema([
 
@@ -296,13 +297,13 @@ class MentoringSessionComments extends Page
                                                     ->inlineLabel()
                                                     ->columnSpanFull(),
                                                 RichEditor::make('message')
-                                                    ->label('Catatan Mentoring')
+                                                    ->label('Mentoring Notes')
                                                     ->toolbarButtons([
                                                         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
                                                         ['h2', 'h3'],
                                                         ['blockquote', 'bulletList', 'orderedList'],
                                                     ])
-                                                    ->placeholder('Tulis catatan mentoring di sini...')
+                                                    ->placeholder('Type your mentoring notes here...')
                                                     ->extraAttributes([
                                                         'style' => 'min-height:300px',
                                                     ]),
@@ -325,7 +326,7 @@ class MentoringSessionComments extends Page
                                                     ->hidden(),
 
                                                 Action::make('saveSession')
-                                                    ->label('Simpan Catatan')
+                                                    ->label('Save Notes')
                                                     ->button()
                                                     ->icon('heroicon-m-chat-bubble-oval-left-ellipsis')
                                                     ->extraAttributes([
@@ -397,9 +398,9 @@ class MentoringSessionComments extends Page
         return Action::make('deleteSession')
             ->requiresConfirmation()
             ->hidden(fn() => $this->studentTopic?->mentoringSessions->comments->parent_id === null)
-            ->modalHeading('Hapus Catatan')
-            ->modalDescription('Apakah kamu yakin ingin menghapus catatan ini? Tindakan ini tidak bisa dibatalkan.')
-            ->modalSubmitActionLabel('Ya, Hapus')
+            ->modalHeading('Delete Comment')
+            ->modalDescription('Are you sure you want to delete this comment? This action cannot be undone.')
+            ->modalSubmitActionLabel('Yes, Delete')
             ->color('danger')
             ->action(function (array $arguments) {
                 $test = $this->studentTopic?->mentoring_sessions->comments->parent_id === null;
@@ -429,8 +430,8 @@ class MentoringSessionComments extends Page
             ->statePath('data')
             ->schema([
                 Textarea::make('message')
-                    ->label('Balasan Guru')
-                    ->placeholder('Tulis balasan...')
+                    ->label('Response')
+                    ->placeholder('Type your response here...')
                     ->rows(4)
                     ->hidden(fn() => $this->studentTopic?->status === 'completed')
                     ->required()

@@ -25,8 +25,8 @@ class StudentView extends Page implements HasSchemas
 
     protected string $view = 'filament.parent.pages.student-view';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserCircle;
-    protected static ?string $navigationLabel = 'Detail Siswa';
-    protected static ?string $title = 'Detail Siswa';
+    protected static ?string $navigationLabel = 'Student Detail';
+    protected static ?string $title = 'Student Detail';
 
     public array $data = [];
     public $student;
@@ -72,21 +72,21 @@ class StudentView extends Page implements HasSchemas
         return $schema
             ->record($this->student)
             ->components([
-                Section::make('Informasi Siswa')
-                    ->description('Detail data siswa dan assessment terbaru')
+                Section::make('Student Information')
+                    ->description('Student details, including name, class, and assessment status.')
                     ->icon('heroicon-o-academic-cap')
                     ->schema([
                         TextEntry::make('name')
-                            ->label('Nama Siswa')
+                            ->label('Student Name')
                             ->weight('bold'),
 
                         TextEntry::make('class')
-                            ->label('Kelas')
+                            ->label('Class')
                             ->badge()
                             ->color('primary'),
 
                         TextEntry::make('assessments.status')
-                            ->label('Status Assessment')
+                            ->label('Assessment Status')
                             ->badge()
                             ->color(fn(?string $state): string => match ($state) {
                                 'finished' => 'success',
@@ -99,14 +99,18 @@ class StudentView extends Page implements HasSchemas
                             }),
 
                         TextEntry::make('assessments.assessment_date')
-                            ->label('Tanggal Assessment')
+                            ->label('Assessment Date')
                             ->date('d M Y'),
                     ])
                     ->columns(2)
                     ->collapsible(),
-                Section::make('Hasil Assessment')
+                Section::make('Assessment Results')
+                    
+                    ->description('Topics identified from the latest assessment and their details')
+                  
+                ->label('Assessment Results')
                     ->icon('heroicon-o-bookmark')
-                    ->description('Detail topik yang diambil')
+                   
                     ->schema( [ 
                         View::make('filament.parent.pages.assessments-result')
             ->viewData([
@@ -117,15 +121,15 @@ class StudentView extends Page implements HasSchemas
                         ]),
                 Section::make('Topic')
                     ->icon('heroicon-o-bookmark')
-                    ->description('Detail topik yang diambil')
+                    ->description('Topics identified from the latest assessment and their details')
                     ->schema([
                         RepeatableEntry::make('studentTopics')
-                            ->label('Progress Pembelajaran')
+                            ->label('Learning Progress')
                             ->contained(false)
                             ->schema([
 
                                 Section::make(fn($record) => $record->topic?->title ?? 'Topik')
-                                    ->description('Detail perkembangan pembelajaran siswa')
+                                    ->description('Detail of the learning topic, including status, session dates, and number of sessions.')
                                     ->icon('heroicon-o-document')
                                     ->collapsed()
                                     ->schema([
@@ -147,13 +151,13 @@ class StudentView extends Page implements HasSchemas
                                             }),
 
                                         TextEntry::make('mentoringSessions.session_date')
-                                            ->label('Sesi Pertama')
+                                            ->label('First Session Date')
                                             ->date('d M Y')
                                             ->visible(fn($state) => filled($state))
                                             ->icon('heroicon-o-calendar-days'),
 
                                         TextEntry::make('comments_count')
-                                            ->label('Jumlah Sesi ')
+                                            ->label('Session Count')
                                             ->state(function ($record) {
 
                                                 return $record->mentoringSessions?->comments
@@ -165,7 +169,7 @@ class StudentView extends Page implements HasSchemas
                                             ->color('info')
                                             ->formatStateUsing(fn($state) => $state . ' Sesi'),
                                         TextEntry::make('last_session')
-                                            ->label('Sesi Terakhir')
+                                            ->label('Last Session')
                                             ->state(function ($record) {
 
                                                 $latestComment = $record->mentoringSessions?->comments
