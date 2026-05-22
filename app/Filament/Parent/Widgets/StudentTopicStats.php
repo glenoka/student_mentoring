@@ -47,9 +47,7 @@ protected function getDescription(): ?string
 
     foreach ($studentTopics as $studentTopic) {
 
-        $latestSession = $studentTopic->mentoringSessions
-
-            ->first();
+       $latestSession = $studentTopic->mentoringSessions;
 
         /*
         |--------------------------------------------------------------------------
@@ -77,7 +75,7 @@ protected function getDescription(): ?string
                     : 'Finished'
             )
             ->description(
-                $latestSession->session_date->format('d-m-Y')
+                $latestSession->session_date->diffForHumans()
             )
             ->color(
                 $latestSession->status == 'in_progress'
