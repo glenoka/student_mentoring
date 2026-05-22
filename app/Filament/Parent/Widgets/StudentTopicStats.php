@@ -75,12 +75,17 @@ protected function getDescription(): ?string
                     : 'Finished'
             )
             ->description(
-                $latestSession->session_date->diffForHumans()
+                $latestSession->created_at->diffForHumans()
             )
             ->color(
                 $latestSession->status == 'in_progress'
                     ? 'warning'
                     : 'success'
+            )
+            ->url(
+                MentoringSessionComments::getUrl([
+                    'uuid' => $studentTopic->uuid,
+                ])
             )
              ->chart([7, 2, 10, 3, 15, 4, 17])
             ->icon('heroicon-o-book-open');
