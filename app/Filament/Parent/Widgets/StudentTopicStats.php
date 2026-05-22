@@ -77,7 +77,7 @@ protected function getDescription(): ?string
                     : 'Finished'
             )
             ->description(
-                $latestSession->session_date?->diffForHumans()
+                $latestSession->session_date->format('d-m-Y')
             )
             ->color(
                 $latestSession->status == 'in_progress'
