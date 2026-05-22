@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 
 use App\Filament\Parent\Pages\LoginParent;
+use App\Filament\Parent\Widgets\StudentTopicStats;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -46,7 +47,8 @@ class ParentPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Parent/Widgets'), for: 'App\Filament\Parent\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
+                StudentTopicStats::class,
+                //FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
