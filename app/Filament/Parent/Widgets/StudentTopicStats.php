@@ -32,7 +32,7 @@ protected function getDescription(): ?string
 
             $stats[] = Stat::make(
                     'Title : '.$studentTopic->topic->title,
-                    $studentTopic->mentoringSessions->status=='in_progress' ? 'Process' : 'Finished' 
+                    $studentTopic->mentoringSessions?->status=='in_progress' ? 'Process' : 'Finished' 
                    
                 )
                 ->url(MentoringSessionComments::getUrl([
