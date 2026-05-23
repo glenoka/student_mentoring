@@ -5,23 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\Teachers;
 
 class LearningMaterial extends Model
 {
    use HasFactory;
     protected $table='learning_materials';
     protected $fillable = [
-        //'topic_id',
+        'description',
+                'thumbnail',
+                'teacher_id',
         'title',
         'type',
         'url',
         'order_number',
     ];
 
-    public function topic()
-    {
-        return $this->belongsTo(Topics::class);
-    }
+   
 
     public function images()
     {
@@ -30,6 +30,10 @@ class LearningMaterial extends Model
     public function videos()
     {
         return $this->hasMany(MaterialImage::class);
+    }
+    public function teacher()
+    {
+        return $this->belongsTo(Teachers::class);
     }
     public function getRouteKeyName()
 {
