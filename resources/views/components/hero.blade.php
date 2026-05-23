@@ -1,7 +1,31 @@
 <section class="max-w-7xl mx-auto px-6 py-16 md:py-24 grid lg:grid-cols-2 gap-16 items-center">
         <!-- Text Content -->
-        <div class="space-y-8 text-center lg:text-left">
-            <span class="inline-block px-4 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-full border border-blue-100 dark:border-blue-800 uppercase">Sistem Edukasi Terintegrasi</span>
+        <div class="space-y-6 text-center lg:text-left">
+             <div class="inline-flex flex-col sm:flex-row items-center gap-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-3.5 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm max-w-lg mx-auto lg:mx-0 text-left">
+                <!-- Logos Container -->
+                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-1 rounded-xl">
+                    <!-- Tut Wuri Logo -->
+                    <img src="https://lh4.googleusercontent.com/proxy/kAG5LUPWdYl591r3rh7uJpmMo4Z1M6uh_nia2hrqNgSbLSUc3YyK1398II2IHB9N9MWnVv7nuXO5sDLXPj0EOkzzRbIQncqhqZdxlEE0RuUF80e7353KaonfX3LzAAi5-RZA6IP9R7Rs_zkQHUzOG8X39N6krD_v6CeqS2UKJsJfS9O2fGfw1awHjg" 
+                         alt="Logo Kemdikbudristek" 
+                         class="h-9 w-9 object-contain rounded"
+                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg';">
+                    <div class="w-px h-5 bg-gray-200 dark:bg-slate-700"></div>
+                    <!-- Bima Logo -->
+                    <img src="https://scontent.fdps7-1.fna.fbcdn.net/v/t39.30808-1/335658689_1044641556542247_2007961440224408619_n.jpg?stp=c17.4.639.638a_dst-jpg_s480x480_tt6&_nc_cat=106&ccb=1-7&_nc_sid=1d2534&_nc_ohc=XdizTZGkgGsQ7kNvwHd65Xm&_nc_oc=AdoFFzWhVVHBpjdlnYFzjd970xYnKY8Qgy6uoQlAF71UzIpJARLnhySvRFeZNLnvyQ-W1zljHwI7THf1hMZswk0Y&_nc_zt=24&_nc_ht=scontent.fdps7-1.fna&_nc_gid=uPWxcH0yOWNnYqDtI5Luag&_nc_ss=7b2a8&oh=00_Af6-TT1Z0F2dG4OY9zM5cgqkcuElGAhdEjstgBXj5UCdbA&oe=6A173204" 
+                         alt="Logo Program BIMA" 
+                         class="h-9 w-9 object-cover rounded-full border border-amber-500/30"
+                         onerror="this.onerror=null; this.outerHTML='<div class=\'w-9 h-9 bg-amber-500/10 text-amber-600 rounded-full flex items-center justify-center font-bold text-[10px]\'>BIMA</div>';">
+                </div>
+                <!-- Text Info -->
+                <div class="space-y-0.5">
+                    <p class="text-[10px] md:text-xs font-black text-slate-800 dark:text-slate-200 tracking-wide uppercase leading-none">
+                        DPPM - DITJEN RISBANG KEMDIKTISAINTEK
+                    </p>
+                    <p class="text-[9px] md:text-[10px] text-blue-600 dark:text-blue-400 font-bold tracking-tight">
+                        Program: <span class="text-slate-600 dark:text-slate-300 font-medium">Pemberdayaan Kemitraan Masyarakat Tahun 2026</span>
+                    </p>
+                </div>
+            </div>
             <h2 class="text-4xl md:text-6xl font-extrabold leading-[1.1] text-slate-900 dark:text-white">
                 Monitoring Siswa yang <span class="text-blue-600">Transparan</span>, Kolaboratif, dan Berdampak
             </h2>

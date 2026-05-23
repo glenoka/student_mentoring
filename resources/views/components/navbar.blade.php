@@ -1,13 +1,11 @@
 <nav class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-100 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-2 rounded-xl text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                </div>
-                <div>
-                    <h1 class="text-xl font-extrabold text-blue-600 leading-none">InklusifEdu<span class="text-gray-400 font-semibold">.com</span></h1>
-                    <p class="text-[10px] font-bold text-gray-500 tracking-widest uppercase">SMPN 10 TAKARI</p>
-                </div>
+                <!-- Header Logo Image (Updated source and increased size dynamically) -->
+                <img src="https://inklusifedu.com/images/logo_edu.png" 
+                     alt="InklusifEdu Logo" 
+                     class="h-20 w-auto object-contain rounded-lg" 
+                     onerror="this.onerror=null; this.outerHTML='<div class=\'bg-blue-600 p-2 rounded-xl text-white\'><svg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\'/><path d=\'M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\'/></svg></div>';">
             </div>
 
             <div class="flex items-center gap-4">
