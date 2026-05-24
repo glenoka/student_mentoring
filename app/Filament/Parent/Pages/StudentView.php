@@ -30,44 +30,43 @@ class StudentView extends Page implements HasSchemas
 
     public array $data = [];
     public $student;
-     public $record;
-     public $booleanAnswers;
-     public $numericAnswers;
+    public $record;
+    public $booleanAnswers;
+    public $numericAnswers;
     public function mount()
     {
         $parentID = Parents::where('user_id', Auth::user()->id)->first();
-    
+
         $this->student = Student::where('parent_id', $parentID->id)
             ->with('assessments.answers.question', 'studentTopics.topic', 'studentTopics.mentoringSessions.comments')
             ->first();
-     if (!$this->student) {
+        if (!$this->student) {
 
-    abort(response()->view('errors.errorhandling', [
-            'code' => 404,
-            'title' => 'Student Not Found',
-            'message' => 'No student associated with the current parent was found. Please contact administrator for assistance.',
-        ], 404));
-}
-        
+            abort(response()->view('errors.errorhandling', [
+                'code' => 404,
+                'title' => 'Student Not Found',
+                'message' => 'No student associated with the current parent was found. Please contact administrator for assistance.',
+            ], 404));
+        }
 
-      
- $this->record = Assessments::with(['student', 'answers.question'])->where('student_id', $this->student->id)->firstOrFail();
-// dd($this->record);
+
+
+        $this->record = Assessments::with(['student', 'answers.question'])->where('student_id', $this->student->id)->firstOrFail();
+        // dd($this->record);
 
         // Fill data as array for the schema
         $this->data = $this->student?->toArray() ?? [];
 
-          $answers = $this->record->answers->load('question');
+        $answers = $this->record->answers->load('question');
 
         $this->numericAnswers = $answers->filter(fn($a) => $a->question->type === 'numeric');
-      
-        $this->booleanAnswers = $answers->filter(fn($a) => $a->question->type === 'boolean' && $a->boolean_value == 1);
 
+        $this->booleanAnswers = $answers->filter(fn($a) => $a->question->type === 'boolean' && $a->boolean_value == 1);
     }
 
     public function studentDetail(Schema $schema): Schema
     {
-      
+
 
         return $schema
             ->record($this->student)
@@ -105,20 +104,20 @@ class StudentView extends Page implements HasSchemas
                     ->columns(2)
                     ->collapsible(),
                 Section::make('Assessment Results')
-                    
+
                     ->description('Topics identified from the latest assessment and their details')
-                  
-                ->label('Assessment Results')
+
+                    ->label('Assessment Results')
                     ->icon('heroicon-o-bookmark')
-                   
-                    ->schema( [ 
+
+                    ->schema([
                         View::make('filament.parent.pages.assessments-result')
-            ->viewData([
-                'booleanAnswers' => $this->booleanAnswers,
-                'numericAnswers' => $this->numericAnswers,
-            ]),
-                        
-                        ]),
+                            ->viewData([
+                                'booleanAnswers' => $this->booleanAnswers,
+                                'numericAnswers' => $this->numericAnswers,
+                            ]),
+
+                    ]),
                 Section::make('Topic')
                     ->icon('heroicon-o-bookmark')
                     ->description('Topics identified from the latest assessment and their details')

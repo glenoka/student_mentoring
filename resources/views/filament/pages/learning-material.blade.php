@@ -19,167 +19,196 @@
                             d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
 
-                    <input
-    type="text"
-    wire:model.live.debounce.500ms="search"
-    placeholder="Cari materi..."
-    class="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
-/>
+                    <input type="text" wire:model.live.debounce.500ms="search" placeholder="Cari materi..."
+                        class="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition" />
 
                 </div>
 
                 <!-- FILTER -->
-               <select
-    wire:model.live="type"
-    class="h-12 px-4 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
->
-    <option value="">Semua Type</option>
-    <option value="document">Document</option>
-    <option value="video">Video</option>
-    <option value="image">Image</option>
-    <option value="game">Game</option>
-</select>
+                <select wire:model.live="type"
+                    class="h-12 px-4 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition">
+                    <option value="">Semua Type</option>
+                    <option value="document">Document</option>
+                    <option value="video">Video</option>
+                    <option value="image">Image</option>
+                    <option value="game">Game</option>
+                </select>
 
             </div>
 
             <!-- GRID -->
-     <div class="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
+            <div class="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
 
                 <!-- CARD -->
-                @foreach($this->getMaterialsProperty() as $m)
-                <div class="flex flex-col overflow-hidden rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg transition duration-300">
+                @foreach ($this->getMaterialsProperty() as $m)
+                    <div
+                        class="flex flex-col overflow-visible rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg transition duration-300">
 
-                    <!-- IMAGE -->
-                    <div class="relative">
+                        <!-- IMAGE -->
+                        <div class="relative ">
 
-                        <img src="{{ $m->thumbnail }}"
-                            alt="Materi" class="w-full h-48 object-cover" />
+                            <img src="{{ asset($m->thumbnail) }}"" alt="Materi" class="w-full h-48 object-cover" />
 
-                        <!-- TYPE -->
-                        <div class="absolute top-4 right-4">
+                            <!-- TYPE -->
+                            <div class="absolute top-4 right-4 z-10">
 
-                          @php
-    $typeConfig = match(strtolower($m->type)) {
-        'document' => [
-            'icon' => 'heroicon-m-document-text',
-            'class' => 'text-blue-600 dark:text-blue-400',
-        ],
+                                @php
+                                    $typeConfig = match (strtolower($m->type)) {
+                                        'document' => [
+                                            'icon' => 'heroicon-m-document-text',
+                                            'class' => 'text-blue-600 dark:text-blue-400',
+                                        ],
 
-        'image' => [
-            'icon' => 'heroicon-m-photo',
-            'class' => 'text-pink-600 dark:text-pink-400',
-        ],
+                                        'image' => [
+                                            'icon' => 'heroicon-m-photo',
+                                            'class' => 'text-pink-600 dark:text-pink-400',
+                                        ],
 
-        'video' => [
-            'icon' => 'heroicon-m-play-circle',
-            'class' => 'text-purple-600 dark:text-purple-400',
-        ],
+                                        'video' => [
+                                            'icon' => 'heroicon-m-play-circle',
+                                            'class' => 'text-purple-600 dark:text-purple-400',
+                                        ],
 
-        'game' => [
-            'icon' => 'heroicon-m-cpu-chip',
-            'class' => 'text-emerald-600 dark:text-emerald-400',
-        ],
+                                        'game' => [
+                                            'icon' => 'heroicon-m-cpu-chip',
+                                            'class' => 'text-emerald-600 dark:text-emerald-400',
+                                        ],
 
-        default => [
-            'icon' => 'heroicon-m-squares-2x2',
-            'class' => 'text-gray-600 dark:text-gray-400',
-        ],
-    };
-@endphp
+                                        default => [
+                                            'icon' => 'heroicon-m-squares-2x2',
+                                            'class' => 'text-gray-600 dark:text-gray-400',
+                                        ],
+                                    };
+                                @endphp
 
-<span
-    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-white/90 dark:bg-gray-900/90 backdrop-blur shadow-sm {{ $typeConfig['class'] }}"
+                                <span
+                                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-white/90 dark:bg-gray-900/90 backdrop-blur shadow-sm {{ $typeConfig['class'] }}">
+                                    <x-filament::icon :icon="$typeConfig['icon']" class="w-3.5 h-3.5" />
+
+                                    {{ ucfirst($m->type) }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <!-- CONTENT -->
+                        <div class="flex flex-col flex-1 p-5">
+
+                            <!-- TOP -->
+                            <div class="flex items-start justify-between gap-3 mb-4">
+
+                                <div>
+
+                                    <!-- TITLE -->
+                                    <h2 class="text-lg font-bold leading-snug text-gray-900 dark:text-white mb-1">
+                                        {{ $m->title }}
+                                    </h2>
+
+
+                                </div>
+
+                                <!-- SHARE -->
+                                <button type="button"
+                                    class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-white/5 transition shrink-0">
+                                    <x-heroicon-m-share class="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                                </button>
+
+                            </div>
+
+                            <!-- DESCRIPTION -->
+                            <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-sm line-clamp-3 mb-5">
+                                {{ $m->description }}
+                            </p>
+
+                            <!-- INFO -->
+                            <div class="grid grid-cols-2 gap-3 mb-5">
+
+                                <div>
+
+                                    <p class="text-[11px] text-gray-400 dark:text-gray-500 mb-1">
+                                        Upload By
+                                    </p>
+
+                                    <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                        {{ $m->teacher->name }}
+                                    </p>
+
+                                </div>
+
+                                <div>
+
+                                    <p class="text-[11px] text-gray-400 dark:text-gray-500 mb-1">
+                                        Created At
+                                    </p>
+
+                                    <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                        {{ $m->created_at->format('d M Y') }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- FOOTER BUTTON -->
+                            <div
+                                class="mt-auto pt-4 border-t border-gray-100 dark:border-white/10 flex items-center gap-2">
+
+                                {{-- Button lihat materi --}}
+                                <button type="button" onclick="window.open('{{ $m->url }}', '_blank')"
+                                    class="flex-1 h-11 rounded-2xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition">
+                                    Lihat Materi
+                                </button>
+
+                                {{-- Dropdown --}}
+                                <div x-data="{ open: false }" class="relative z-20">
+
+                                    {{-- Trigger --}}
+                                    <x-filament::icon-button icon="heroicon-m-ellipsis-vertical" color="gray"
+                                        x-on:click="open = !open" class="!rounded-2xl" label="Actions" />
+
+                                    {{-- Menu --}}
+                                    <div x-show="open" x-transition @click.away="open = false"
+                                        class="absolute right-0 mt-2 w-40 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 shadow-xl overflow-hidden">
+
+                                        {{-- Edit --}}
+                                        <button type="button"
+                                        wire:click="editMaterial({{ $m->id }})"
+                                            class="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 transition">
+
+                                            <x-heroicon-m-pencil-square class="w-4 h-4" />
+
+                                            Edit
+                                        </button>
+<x-filament::modal
+    id="edit-material-modal"
+    width="5xl"
+    class="z-100"
 >
-    <x-filament::icon
-        :icon="$typeConfig['icon']"
-        class="w-3.5 h-3.5"
-    />
+    <x-slot name="heading">
+        Modal heading
+    </x-slot>
 
-    {{ ucfirst($m->type) }}
-</span>
+    {{ $this->editSchema }}
+</x-filament::modal>
+                                        {{-- Delete --}}
+                                        <button type="button"
+                                            class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition">
 
-                        </div>
+                                            <x-heroicon-m-trash class="w-4 h-4" />
 
-                    </div>
+                                            Delete
+                                        </button>
 
-                    <!-- CONTENT -->
-                    <div class="flex flex-col flex-1 p-5">
-
-                        <!-- TOP -->
-                        <div class="flex items-start justify-between gap-3 mb-4">
-
-                            <div>
-
-                                <!-- TITLE -->
-                                <h2 class="text-lg font-bold leading-snug text-gray-900 dark:text-white mb-1">
-                                   {{$m->title}}
-                                </h2>
-
-
+                                    </div>
+                                </div>
                             </div>
-
-                            <!-- SHARE -->
-                            <button type="button"
-                                class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-white/5 transition shrink-0">
-                                <x-heroicon-m-share class="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
-                            </button>
-
-                        </div>
-
-                        <!-- DESCRIPTION -->
-                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-sm line-clamp-3 mb-5">
-                           {{$m->description}}
-                        </p>
-
-                        <!-- INFO -->
-                        <div class="grid grid-cols-2 gap-3 mb-5">
-
-                            <div>
-
-                                <p class="text-[11px] text-gray-400 dark:text-gray-500 mb-1">
-                                    Upload By
-                                </p>
-
-                                <p class="text-sm font-semibold text-gray-800 dark:text-white">
-                                   {{$m->teacher->name}}
-                                </p>
-
-                            </div>
-
-                            <div>
-
-                                <p class="text-[11px] text-gray-400 dark:text-gray-500 mb-1">
-                                    Created At
-                                </p>
-
-                                <p class="text-sm font-semibold text-gray-800 dark:text-white">
-                                    {{$m->created_at->format('d M Y')}}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <!-- FOOTER BUTTON -->
-                        <div class="mt-auto pt-4 border-t border-gray-100 dark:border-white/10">
-
-                            <button type="button"
-                                 onclick="window.open('{{ $m->url }}', '_blank')"
-                                class="w-full h-11 rounded-2xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition">
-                                Lihat Materi
-                            </button>
                         </div>
                     </div>
-                </div>
                 @endforeach
             </div>
-<x-filament::pagination
-    :paginator="$this->getMaterialsProperty()"
-        :page-options="[5, 10, 20, 50, 100, 'all']"
-    current-page-option-property="perPage"
-
-    class="mt-20"
-/>
+            <x-filament::pagination :paginator="$this->getMaterialsProperty()" :page-options="[5, 10, 20, 50, 100, 'all']" current-page-option-property="perPage"
+                class="mt-20" />
         </section>
 
     </div>
