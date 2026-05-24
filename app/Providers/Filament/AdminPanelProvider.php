@@ -34,7 +34,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->databaseNotifications()
-            ->brandLogo(asset('images/logo_edu_potrits.png'))
+                 ->brandLogo(asset('images/logo_edu.png'))
             ->favicon(asset('images/logo.png'))
              ->sidebarCollapsibleOnDesktop()
                 ->collapsedSidebarWidth('9rem')

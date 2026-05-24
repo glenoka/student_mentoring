@@ -29,19 +29,21 @@
                 </div>
 
                 <!-- FILTER -->
-                <select
-                    class="h-12 px-4 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition">
-                    <option>Semua Type</option>
-                    <option>Document</option>
-                    <option>Video</option>
-                    <option>Image</option>
-                    <option>Game</option>
-                </select>
+               <select
+    wire:model.live="type"
+    class="h-12 px-4 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+>
+    <option value="">Semua Type</option>
+    <option value="document">Document</option>
+    <option value="video">Video</option>
+    <option value="image">Image</option>
+    <option value="game">Game</option>
+</select>
 
             </div>
 
             <!-- GRID -->
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
+     <div class="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
 
                 <!-- CARD -->
                 @foreach($this->getMaterialsProperty() as $m)
