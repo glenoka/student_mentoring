@@ -161,47 +161,14 @@
                                 </button>
 
                                 {{-- Dropdown --}}
-                                <div x-data="{ open: false }" class="relative z-20">
+                                <div>
+    <x-filament-actions::group :actions="[
+        $this->editMaterialAction,
+    $this->deleteMaterialAction([$m->id]),
+    ]" />
 
-                                    {{-- Trigger --}}
-                                    <x-filament::icon-button icon="heroicon-m-ellipsis-vertical" color="gray"
-                                        x-on:click="open = !open" class="!rounded-2xl" label="Actions" />
-
-                                    {{-- Menu --}}
-                                    <div x-show="open" x-transition @click.away="open = false"
-                                        class="absolute right-0 mt-2 w-40 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 shadow-xl overflow-hidden">
-
-                                        {{-- Edit --}}
-                                        <button type="button"
-                                        wire:click="editMaterial({{ $m->id }})"
-                                            class="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 transition">
-
-                                            <x-heroicon-m-pencil-square class="w-4 h-4" />
-
-                                            Edit
-                                        </button>
-<x-filament::modal
-    id="edit-material-modal"
-    width="5xl"
-    class="z-100"
->
-    <x-slot name="heading">
-        Modal heading
-    </x-slot>
-
-    {{ $this->editSchema }}
-</x-filament::modal>
-                                        {{-- Delete --}}
-                                        <button type="button"
-                                            class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition">
-
-                                            <x-heroicon-m-trash class="w-4 h-4" />
-
-                                            Delete
-                                        </button>
-
-                                    </div>
-                                </div>
+    <x-filament-actions::modals />
+</div>
                             </div>
                         </div>
                     </div>

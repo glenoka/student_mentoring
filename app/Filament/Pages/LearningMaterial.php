@@ -130,7 +130,101 @@ class LearningMaterial extends Page
                     ])
             ]);
     }
+public function deleteMaterialAction($id): Action
+    {
+       
+        return Action::make('delete')
+            ->icon(Heroicon::Trash)
+            ->label('Delete Material')
+            ->requiresConfirmation()
+            ->action(function (array $arguments){
+                $data = $arguments['data'];
+                dd($data);
+                $material = ModelsLearningMaterial::find($data['id']);
+                if ($material) {
+                    $material->delete();
+                    Notification::make()
+                        ->title('Learning Material Deleted')
+                        ->success()
+                        ->send();
+                }
+            });
+    }
+public function editMaterialAction(): Action
+    {
+        return 
+            Action::make('edit')
+                ->icon(Heroicon::PencilSquare)
+                ->label('Edit Material')
+                ->schema([
+                    Section::make('Material Information')
+                        ->description('Add a new learning material to the platform')
+                        ->icon('heroicon-o-book-open')
+                        ->schema([
+                            TextInput::make('title')
+                                ->required()
+                                ->maxLength(255)
+                                ->placeholder('Contoh: Operasi Bilangan Bulat')
+                                ->label('Judul Materi')
+                                ->prefixIcon('heroicon-o-pencil-square')
+                                ->columnSpan(2),
 
+                            Select::make('type')
+                                ->required()
+                                ->searchable()
+                                ->native(false)
+                                ->options([
+                                    'video' => 'Video',
+                                    'document' => 'Document',
+                                    'game' => 'Game',
+                                    'image' => 'Image',
+                                ])
+                                ->placeholder('Pilih type materi')
+                                ->label('Type Materi'),
+
+                            TextInput::make('url')
+                                ->required()
+                                ->url()
+                                ->placeholder('https://example.com')
+                                ->prefixIcon('heroicon-o-link')
+                                ->label('URL Materi'),
+
+                            Textarea::make('description')
+                                ->required()
+                                ->rows(5)
+                                ->autosize()
+                                ->placeholder('Masukkan deskripsi materi...')
+                                ->columnSpan(2)
+                                ->label('Deskripsi'),
+
+                            FileUpload::make('thumbnail')
+                                ->required()
+                                ->disk('public')
+                                ->directory('thumbnails')
+                                ->maxSize(1024)
+                                ->imagePreviewHeight('200')
+                                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                ->helperText('Format: JPG, PNG, WEBP. Maksimal 2MB')
+                                ->columnSpan(2)
+                                ->label('Thumbnail Materi'),
+                        ]),
+                ])
+                ->action(function ($data) {
+                    ModelsLearningMaterial::create([
+                        'title' => $data['title'],
+                        'description' => $data['description'],
+                        'type' => $data['type'],
+                        'url' => $data['url'],
+                        'thumbnail' => $data['thumbnail'],
+                        'teacher_id' => Auth::user()->teacher->id,
+                    ]);
+                    Notification::make()
+                        ->title('Learning Material Added')
+                        ->success()
+                        ->send();
+                });
+        
+    }
     protected function getHeaderActions(): array
     {
         return [
