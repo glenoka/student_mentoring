@@ -5,16 +5,16 @@
                 <!-- Logos Container -->
                 <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-1 rounded-xl">
                     <!-- Tut Wuri Logo -->
-                    <img src="https://lh4.googleusercontent.com/proxy/kAG5LUPWdYl591r3rh7uJpmMo4Z1M6uh_nia2hrqNgSbLSUc3YyK1398II2IHB9N9MWnVv7nuXO5sDLXPj0EOkzzRbIQncqhqZdxlEE0RuUF80e7353KaonfX3LzAAi5-RZA6IP9R7Rs_zkQHUzOG8X39N6krD_v6CeqS2UKJsJfS9O2fGfw1awHjg" 
+                    <img src="{{ asset('images/tutwuri.png') }}" 
                          alt="Logo Kemdikbudristek" 
                          class="h-9 w-9 object-contain rounded"
-                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg';">
+                         >
                     <div class="w-px h-5 bg-gray-200 dark:bg-slate-700"></div>
                     <!-- Bima Logo -->
-                    <img src="https://scontent.fdps7-1.fna.fbcdn.net/v/t39.30808-1/335658689_1044641556542247_2007961440224408619_n.jpg?stp=c17.4.639.638a_dst-jpg_s480x480_tt6&_nc_cat=106&ccb=1-7&_nc_sid=1d2534&_nc_ohc=XdizTZGkgGsQ7kNvwHd65Xm&_nc_oc=AdoFFzWhVVHBpjdlnYFzjd970xYnKY8Qgy6uoQlAF71UzIpJARLnhySvRFeZNLnvyQ-W1zljHwI7THf1hMZswk0Y&_nc_zt=24&_nc_ht=scontent.fdps7-1.fna&_nc_gid=uPWxcH0yOWNnYqDtI5Luag&_nc_ss=7b2a8&oh=00_Af6-TT1Z0F2dG4OY9zM5cgqkcuElGAhdEjstgBXj5UCdbA&oe=6A173204" 
+                    <img src="{{ asset('images/bima.jpg') }}" 
                          alt="Logo Program BIMA" 
                          class="h-9 w-9 object-cover rounded-full border border-amber-500/30"
-                         onerror="this.onerror=null; this.outerHTML='<div class=\'w-9 h-9 bg-amber-500/10 text-amber-600 rounded-full flex items-center justify-center font-bold text-[10px]\'>BIMA</div>';">
+                         >
                 </div>
                 <!-- Text Info -->
                 <div class="space-y-0.5">
