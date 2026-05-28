@@ -162,13 +162,17 @@
 
                                 {{-- Dropdown --}}
                                 <div>
-    <x-filament-actions::group :actions="[
-        $this->editMaterialAction,
-    $this->deleteMaterialAction([$m->id]),
-    ]" />
+                                 
+
+        <x-filament-actions::group :actions="[
+            ($this->editAction)(['material' => $m->id]),
+            ($this->deleteAction)(['material' => $m->id]),
+        ]" />
+  
 
     <x-filament-actions::modals />
-</div>
+
+                                </div>
                             </div>
                         </div>
                     </div>

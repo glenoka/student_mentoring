@@ -5,6 +5,8 @@ namespace App\Filament\Pages;
 use App\Models\LearningMaterial as ModelsLearningMaterial;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -22,13 +24,15 @@ use UnitEnum;
 class LearningMaterial extends Page
 {
     use WithPagination;
+    use InteractsWithActions;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
     protected static ?string $navigationLabel = 'Learning Materials';
     protected static string | UnitEnum | null $navigationGroup = 'Learning Resources';
 
     protected string $view = 'filament.pages.learning-material';
     public $materials;
-    public $selectedMaterial;
+
+    public ?ModelsLearningMaterial $selectedMaterial = null;
     public $editModal = false;
     public int | string $perPage = 10;
     public ?string $search = '';
@@ -54,24 +58,7 @@ class LearningMaterial extends Page
     {
         $this->resetPage();
     }
-    public function editMaterial($record)
-    {
-        
-        $material = ModelsLearningMaterial::where('id',$record)->first();
-        //dd($material);
-        $this->selectedMaterial = $material;
-        $this->data = [
-            'title' => $material['title'] ?? '',
-            'description' => $material['description'] ?? '',
-            'type' => $material['type'] ?? '',
-            'url' => $material['url'] ?? '',
-           'thumbnail' => $material['thumbnail']
-        ? [$material['thumbnail']]
-        : [],
-        ];
 
-        $this->dispatch('open-modal', id: 'edit-material-modal');
-    }
 
     public function editSchema(Schema $schema): Schema
     {
@@ -130,105 +117,11 @@ class LearningMaterial extends Page
                     ])
             ]);
     }
-public function deleteMaterialAction($id): Action
-    {
-       
-        return Action::make('delete')
-            ->icon(Heroicon::Trash)
-            ->label('Delete Material')
-            ->requiresConfirmation()
-            ->action(function (array $arguments){
-                $data = $arguments['data'];
-                dd($data);
-                $material = ModelsLearningMaterial::find($data['id']);
-                if ($material) {
-                    $material->delete();
-                    Notification::make()
-                        ->title('Learning Material Deleted')
-                        ->success()
-                        ->send();
-                }
-            });
-    }
-public function editMaterialAction(): Action
-    {
-        return 
-            Action::make('edit')
-                ->icon(Heroicon::PencilSquare)
-                ->label('Edit Material')
-                ->schema([
-                    Section::make('Material Information')
-                        ->description('Add a new learning material to the platform')
-                        ->icon('heroicon-o-book-open')
-                        ->schema([
-                            TextInput::make('title')
-                                ->required()
-                                ->maxLength(255)
-                                ->placeholder('Contoh: Operasi Bilangan Bulat')
-                                ->label('Judul Materi')
-                                ->prefixIcon('heroicon-o-pencil-square')
-                                ->columnSpan(2),
 
-                            Select::make('type')
-                                ->required()
-                                ->searchable()
-                                ->native(false)
-                                ->options([
-                                    'video' => 'Video',
-                                    'document' => 'Document',
-                                    'game' => 'Game',
-                                    'image' => 'Image',
-                                ])
-                                ->placeholder('Pilih type materi')
-                                ->label('Type Materi'),
-
-                            TextInput::make('url')
-                                ->required()
-                                ->url()
-                                ->placeholder('https://example.com')
-                                ->prefixIcon('heroicon-o-link')
-                                ->label('URL Materi'),
-
-                            Textarea::make('description')
-                                ->required()
-                                ->rows(5)
-                                ->autosize()
-                                ->placeholder('Masukkan deskripsi materi...')
-                                ->columnSpan(2)
-                                ->label('Deskripsi'),
-
-                            FileUpload::make('thumbnail')
-                                ->required()
-                                ->disk('public')
-                                ->directory('thumbnails')
-                                ->maxSize(1024)
-                                ->imagePreviewHeight('200')
-                                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                                ->helperText('Format: JPG, PNG, WEBP. Maksimal 2MB')
-                                ->columnSpan(2)
-                                ->label('Thumbnail Materi'),
-                        ]),
-                ])
-                ->action(function ($data) {
-                    ModelsLearningMaterial::create([
-                        'title' => $data['title'],
-                        'description' => $data['description'],
-                        'type' => $data['type'],
-                        'url' => $data['url'],
-                        'thumbnail' => $data['thumbnail'],
-                        'teacher_id' => Auth::user()->teacher->id,
-                    ]);
-                    Notification::make()
-                        ->title('Learning Material Added')
-                        ->success()
-                        ->send();
-                });
-        
-    }
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('edit')
+            Action::make('new')
                 ->icon(Heroicon::DocumentPlus)
                 ->label('Add New Material')
                 ->schema([
@@ -318,4 +211,74 @@ public function editMaterialAction(): Action
             ->latest()
             ->paginate($this->perPage);
     }
+
+public function editAction(): Action
+{
+    return Action::make('edit')
+        ->modalHeading('Edit Post')
+        ->schema([
+            TextInput::make('title')
+                                ->required()
+                                ->maxLength(255)
+                                ->placeholder('Contoh: Operasi Bilangan Bulat')
+                                ->label('Judul Materi')
+                                ->prefixIcon('heroicon-o-pencil-square')
+                                ->columnSpan(2),
+
+                            Select::make('type')
+                                ->required()
+                                ->searchable()
+                                ->native(false)
+                                ->options([
+                                    'video' => 'Video',
+                                    'document' => 'Document',
+                                    'game' => 'Game',
+                                    'image' => 'Image',
+                                ])
+                                ->placeholder('Pilih type materi')
+                                ->label('Type Materi'),
+
+                            TextInput::make('url')
+                                ->required()
+                                ->url()
+                                ->placeholder('https://example.com')
+                                ->prefixIcon('heroicon-o-link')
+                                ->label('URL Materi'),
+
+                            Textarea::make('description')
+                                ->required()
+                                ->rows(5)
+                                ->autosize()
+                                ->placeholder('Masukkan deskripsi materi...')
+                                ->columnSpan(2)
+                                ->label('Deskripsi'),
+
+                            FileUpload::make('thumbnail')
+                                ->required()
+                                ->disk('public')
+                                ->directory('thumbnails')
+                                ->maxSize(1024)
+                                ->imagePreviewHeight('200')
+                                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                ->helperText('Format: JPG, PNG, WEBP. Maksimal 2MB')
+                                ->columnSpan(2)
+                                ->label('Thumbnail Materi'),
+        ])
+        ->fillForm(fn (array $arguments) => ModelsLearningMaterial::find($arguments['material'])->toArray())
+        ->action(function (array $data, array $arguments) {
+            ModelsLearningMaterial::find($arguments['material'])->update($data);
+        });
+}
+
+public function deleteAction(): Action
+{
+    return Action::make('delete')
+        ->color('danger')
+        ->requiresConfirmation()
+        ->modalHeading('Delete Post')
+        ->modalDescription('Are you sure?')
+        ->action(fn (array $arguments) => ModelsLearningMaterial::find($arguments['material'])?->delete());
+}
+
+   
 }
