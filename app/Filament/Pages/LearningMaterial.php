@@ -133,7 +133,7 @@ class LearningMaterial extends Page
                                 ->required()
                                 ->maxLength(255)
                                 ->placeholder('Contoh: Operasi Bilangan Bulat')
-                                ->label('Judul Materi')
+                                ->label('Title Material')
                                 ->prefixIcon('heroicon-o-pencil-square')
                                 ->columnSpan(2),
 
@@ -148,22 +148,22 @@ class LearningMaterial extends Page
                                     'image' => 'Image',
                                 ])
                                 ->placeholder('Pilih type materi')
-                                ->label('Type Materi'),
+                                ->label('Type Material'),
 
                             TextInput::make('url')
                                 ->required()
                                 ->url()
                                 ->placeholder('https://example.com')
                                 ->prefixIcon('heroicon-o-link')
-                                ->label('URL Materi'),
+                                ->label('URL Material'),
 
                             Textarea::make('description')
                                 ->required()
                                 ->rows(5)
                                 ->autosize()
-                                ->placeholder('Masukkan deskripsi materi...')
+                                ->placeholder('Add description...')
                                 ->columnSpan(2)
-                                ->label('Deskripsi'),
+                                ->label('Description'),
 
                             FileUpload::make('thumbnail')
                                 ->required()
@@ -172,9 +172,9 @@ class LearningMaterial extends Page
                                 ->maxSize(1024)
                                 ->imagePreviewHeight('200')
                                 ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                                ->helperText('Format: JPG, PNG, WEBP. Maksimal 2MB')
+                                ->helperText('Format: JPG, PNG, WEBP. Maximum 2MB')
                                 ->columnSpan(2)
-                                ->label('Thumbnail Materi'),
+                                ->label('Thumbnail Material'),
                         ]),
                 ])
                 ->action(function ($data) {
@@ -215,13 +215,14 @@ class LearningMaterial extends Page
 public function editAction(): Action
 {
     return Action::make('edit')
-        ->modalHeading('Edit Post')
+        ->modalHeading('Edit Material')
+        ->icon(Heroicon::PencilSquare)
         ->schema([
             TextInput::make('title')
                                 ->required()
                                 ->maxLength(255)
                                 ->placeholder('Contoh: Operasi Bilangan Bulat')
-                                ->label('Judul Materi')
+                                ->label('Title')
                                 ->prefixIcon('heroicon-o-pencil-square')
                                 ->columnSpan(2),
 
@@ -236,22 +237,22 @@ public function editAction(): Action
                                     'image' => 'Image',
                                 ])
                                 ->placeholder('Pilih type materi')
-                                ->label('Type Materi'),
+                                ->label('Type Material'),
 
                             TextInput::make('url')
                                 ->required()
                                 ->url()
                                 ->placeholder('https://example.com')
                                 ->prefixIcon('heroicon-o-link')
-                                ->label('URL Materi'),
+                                ->label('URL Material'),
 
                             Textarea::make('description')
                                 ->required()
                                 ->rows(5)
                                 ->autosize()
-                                ->placeholder('Masukkan deskripsi materi...')
+                                ->placeholder('Add description...')
                                 ->columnSpan(2)
-                                ->label('Deskripsi'),
+                                ->label('Description'),
 
                             FileUpload::make('thumbnail')
                                 ->required()
@@ -260,9 +261,9 @@ public function editAction(): Action
                                 ->maxSize(1024)
                                 ->imagePreviewHeight('200')
                                 ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                                ->helperText('Format: JPG, PNG, WEBP. Maksimal 2MB')
+                                ->helperText('Format: JPG, PNG, WEBP. Maximum 2MB')
                                 ->columnSpan(2)
-                                ->label('Thumbnail Materi'),
+                                ->label('Thumbnail Material'),
         ])
         ->fillForm(fn (array $arguments) => ModelsLearningMaterial::find($arguments['material'])->toArray())
         ->action(function (array $data, array $arguments) {
@@ -274,8 +275,9 @@ public function deleteAction(): Action
 {
     return Action::make('delete')
         ->color('danger')
+        ->icon(Heroicon::Trash)
         ->requiresConfirmation()
-        ->modalHeading('Delete Post')
+        ->modalHeading('Delete Material')
         ->modalDescription('Are you sure?')
         ->action(fn (array $arguments) => ModelsLearningMaterial::find($arguments['material'])?->delete());
 }
