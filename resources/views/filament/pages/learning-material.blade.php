@@ -47,7 +47,13 @@
                         <!-- IMAGE -->
                         <div class="relative ">
 
-                            <img src="{{ asset($m->thumbnail) }}"" alt="Materi" class="w-full h-48 object-cover" />
+                        <img 
+    src="{{ Storage::disk('public')->exists($m->thumbnail) 
+        ? Storage::url($m->thumbnail) 
+        : 'https://dummyimage.com/600x400/ffffff/000000.png&text=No+Image' }}"
+    alt="Materi"
+    class="w-full h-48 object-cover"
+/>
 
                             <!-- TYPE -->
                             <div class="absolute top-4 right-4 z-10">
